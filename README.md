@@ -63,5 +63,3 @@ Secciones del sistema que atañen a distintas partes de la operatoria de la empr
 
 ## ERS
 Especificación de Requerimientos de Software.
-
-https://img.hogar.mapfre.es/wp-content/uploads/2018/09/hamburguesa-sencilla.jpg
