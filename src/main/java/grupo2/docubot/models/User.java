@@ -1,6 +1,6 @@
 package grupo2.docubot.models;
 
-import grupo2.docubot.enumerator.Role;
+import grupo2.docubot.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

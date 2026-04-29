@@ -1,4 +1,4 @@
-package grupo2.docubot.enumerator;
+package grupo2.docubot.enums;
 
 public enum Role {
     ADMIN,
