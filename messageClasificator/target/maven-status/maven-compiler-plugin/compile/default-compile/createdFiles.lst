@@ -1,9 +1,0 @@
-com\message_clasificator\ChatAnalyzer.class
-com\message_clasificator\controller\TestController.class
-com\message_clasificator\models\ChatInsight.class
-com\message_clasificator\MessageClasificatorApplication.class
-com\message_clasificator\config\AIConfig.class
-com\message_clasificator\services\ChatAnalysisService.class
-com\message_clasificator\models\AnalysisResponse.class
-com\message_clasificator\models\Message.class
-com\message_clasificator\models\Message$MessageBuilder.class
