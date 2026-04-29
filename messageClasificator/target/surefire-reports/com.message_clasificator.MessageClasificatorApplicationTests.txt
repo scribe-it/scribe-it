@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.message_clasificator.MessageClasificatorApplicationTests
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 6.640 s -- in com.message_clasificator.MessageClasificatorApplicationTests
