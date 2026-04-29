@@ -12,7 +12,7 @@ Caso de uso: documentar un sistema de software complejo y preexistente, que care
 
 3. El analista reenvía a un chat dedicado los textos significativos.
 
-4. Un webhook escucha ese chat y envía todos los mensajes cada cierto tiempo a la Docubot.
+4. Un webhook escucha ese chat y envía todos los mensajes 1 vez al dia al Docubot.
 
 //5. Docubot los almacena en texto plano en la base de datos, y se lo envía a un modelo para limpiar de ruido los textos (pre-procesamiento).
 
