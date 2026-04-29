@@ -14,12 +14,6 @@ Caso de uso: documentar un sistema de software complejo y preexistente, que care
 
 4. Un webhook escucha ese chat y envía todos los mensajes 1 vez al dia al Docubot.
 
-//5. Docubot los almacena en texto plano en la base de datos, y se lo envía a un modelo para limpiar de ruido los textos (pre-procesamiento).
-
-//6. Luego envía esos textos pre procesados a un modelo de clasificación (regresión logística) etiqueta los textos significativos según "áreas de trabajo". Devuelve un JSON con una estructura pre definida.
-
-//7. Ese material recopilado, curado y etiquetado se almacena en una base de datos y se muestra en una vista para ser estudiada por el analista y, en su caso, agrupar mensajes, descripciones, afirmaciones, según Casos de Uso.
-
 5. Docubot los guarda en la base de datos, y al mismo tiempo se los envía a un modelo generativo (LLM) para que estructure el conjunto de mensajes en uno o varios casos de uso según la siguiente estructura:
   
 Caso de uso
@@ -53,6 +47,12 @@ En el system message enviado a la IA, se pedirá un JSON con esas mismas propied
 
 9. El ERS se muestra en otra vista a la que pueden acceder con permisos de sólo lectura todos los empleados usuarios del sistema documentado (en particular los desarrolladores) para estudiar, hacer comentarios, proponer mejoras, y consultar cuando lo requieran.
 
+//5. Docubot los almacena en texto plano en la base de datos, y se lo envía a un modelo para limpiar de ruido los textos (pre-procesamiento).
+
+//6. Luego envía esos textos pre procesados a un modelo de clasificación (regresión logística) etiqueta los textos significativos según "áreas de trabajo". Devuelve un JSON con una estructura pre definida.
+
+//7. Ese material recopilado, curado y etiquetado se almacena en una base de datos y se muestra en una vista para ser estudiada por el analista y, en su caso, agrupar mensajes, descripciones, afirmaciones, según Casos de Uso.
+
 Definiciones:
 
 ## Textos significativos
@@ -63,3 +63,5 @@ Secciones del sistema que atañen a distintas partes de la operatoria de la empr
 
 ## ERS
 Especificación de Requerimientos de Software.
+
+https://img.hogar.mapfre.es/wp-content/uploads/2018/09/hamburguesa-sencilla.jpg
