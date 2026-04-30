@@ -10,18 +10,18 @@ import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
 @Service
-public class ChatAnalysisService {
+public class MessageProcesor {
 
     private final ChatAnalyzer analyzer;
 
-    public ChatAnalysisService(ChatAnalyzer analyzer) {
+    public MessageProcesor(ChatAnalyzer analyzer) {
         this.analyzer = analyzer;
     }
 
-    public AnalysisResponse procesarDia() {
+    public AnalysisResponse getAllMessages() {
 
         //Simulando los mensajes de un dia
-        List<Message> mensajesDelDia = List.of(
+        List<Message> dayMessages = List.of(
                 new Message("Analista", "Hola, buen día. Para el módulo de logística, ¿cómo arranca el proceso de despacho de pedidos?", LocalDateTime.of(2026, 4, 28, 9, 15)),
                 new Message("Experto (Logística)", "Mira, el despachante entra a la sección de \"Pendientes\". Si el pedido ya está pagado, le da al botón \"Generar Hoja de Ruta\". Ahí el sistema le escupe el PDF con las direcciones y el estado del pedido pasa a \"En Viaje\".", LocalDateTime.of(2026, 4, 28, 9, 20)),
                 new Message("Analista", "Perfecto. Cambiando de tema, ¿qué pasa si un cliente quiere devolver algo?", LocalDateTime.of(2026, 4, 28, 11, 30)),
@@ -31,15 +31,15 @@ public class ChatAnalysisService {
         );
 
 
-        String historialFormateado = mensajesDelDia.stream()
+        String formattedHistory = dayMessages.stream()
                 .map(m -> m.getUser() + ": " + m.getContent())
                 .collect(Collectors.joining("\n"));
 
         // Unimos todos los mensajes en un solo bloque de texto
-        String bloqueTexto = String.join("\n", historialFormateado);
+        String textBlock = String.join("\n", formattedHistory);
 
         // Llamamos a la IA (ella parseará el JSON a la lista de objetos automáticamente)
-        return analyzer.classify(historialFormateado);
+        return analyzer.classify(formattedHistory);
 
     }
 }

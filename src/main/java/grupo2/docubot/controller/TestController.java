@@ -1,7 +1,7 @@
 package grupo2.docubot.controller;
 
 import grupo2.docubot.models.AnalysisResponse;
-import grupo2.docubot.services.ChatAnalysisService;
+import grupo2.docubot.services.MessageProcesor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -10,14 +10,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/test")
 public class TestController {
 
-    private final ChatAnalysisService chatAnalysisService;
+    private final MessageProcesor messageProcesor;
 
-    public TestController(ChatAnalysisService chatAnalysisService) {
-        this.chatAnalysisService = chatAnalysisService;
+    public TestController(MessageProcesor messageProcesor) {
+        this.messageProcesor = messageProcesor;
     }
 
     @GetMapping("/correr-simulacion")
     public AnalysisResponse test() {
-        return chatAnalysisService.procesarDia();
+        return messageProcesor.getAllMessages();
     }
 }
