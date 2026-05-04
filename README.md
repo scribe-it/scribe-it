@@ -48,7 +48,7 @@ En el system message enviado a la IA, se pedirá un JSON con esas mismas propied
 9. El ERS se muestra en otra vista a la que pueden acceder con permisos de sólo lectura todos los empleados usuarios del sistema documentado (en particular los desarrolladores) para estudiar, hacer comentarios, proponer mejoras, y consultar cuando lo requieran.
 
 DER:
-![clase uml](/Clase UML.png)
+![clase uml](Clase UML.png)
 
 <!---
 5. Docubot los almacena en texto plano en la base de datos, y se lo envía a un modelo para limpiar de ruido los textos (pre-procesamiento).
