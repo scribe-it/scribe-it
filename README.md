@@ -47,11 +47,16 @@ En el system message enviado a la IA, se pedirá un JSON con esas mismas propied
 
 9. El ERS se muestra en otra vista a la que pueden acceder con permisos de sólo lectura todos los empleados usuarios del sistema documentado (en particular los desarrolladores) para estudiar, hacer comentarios, proponer mejoras, y consultar cuando lo requieran.
 
-//5. Docubot los almacena en texto plano en la base de datos, y se lo envía a un modelo para limpiar de ruido los textos (pre-procesamiento).
+DER:
+![clase uml](/Clase UML.png)
 
-//6. Luego envía esos textos pre procesados a un modelo de clasificación (regresión logística) etiqueta los textos significativos según "áreas de trabajo". Devuelve un JSON con una estructura pre definida.
+<!---
+5. Docubot los almacena en texto plano en la base de datos, y se lo envía a un modelo para limpiar de ruido los textos (pre-procesamiento).
 
-//7. Ese material recopilado, curado y etiquetado se almacena en una base de datos y se muestra en una vista para ser estudiada por el analista y, en su caso, agrupar mensajes, descripciones, afirmaciones, según Casos de Uso.
+6. Luego envía esos textos pre procesados a un modelo de clasificación (regresión logística) etiqueta los textos significativos según "áreas de trabajo". Devuelve un JSON con una estructura pre definida.
+
+7. Ese material recopilado, curado y etiquetado se almacena en una base de datos y se muestra en una vista para ser estudiada por el analista y, en su caso, agrupar mensajes, descripciones, afirmaciones, según Casos de Uso.
+--->
 
 Definiciones:
 
