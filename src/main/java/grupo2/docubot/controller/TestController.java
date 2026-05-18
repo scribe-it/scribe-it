@@ -1,6 +1,6 @@
 package grupo2.docubot.controller;
 
-import grupo2.docubot.models.AnalysisResponse;
+import grupo2.docubot.dto.internal.AnalysisResponse;
 import grupo2.docubot.services.MessageProcesor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,8 +16,8 @@ public class TestController {
         this.messageProcesor = messageProcesor;
     }
 
-    @GetMapping("/correr-simulacion")
-    public AnalysisResponse test() {
-        return messageProcesor.getAllMessages();
-    }
+//    @GetMapping("/correr-simulacion")
+//    public AnalysisResponse test() {
+//        return messageProcesor.getAllMessages();
+//    }
 }
