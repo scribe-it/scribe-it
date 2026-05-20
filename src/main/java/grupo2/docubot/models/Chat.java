@@ -1,19 +1,18 @@
 package grupo2.docubot.models;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Entity
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class Chat {
 
     @Id
@@ -22,7 +21,7 @@ public class Chat {
 
     private LocalDateTime createdAt;
 
-    @OneToMany()
+    @OneToMany(mappedBy = "chat")
     private List<Message> messages = new ArrayList<>();
 
     @ManyToMany

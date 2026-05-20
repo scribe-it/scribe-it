@@ -5,6 +5,7 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
+@Entity
 @Getter
 @Setter
 @AllArgsConstructor
@@ -26,4 +27,9 @@ public class Message {
     private User user;
 
     private LocalDateTime timestamp;
+
+    @Column(nullable = false)
+    private Chat chat;
+
+    private Boolean read;
 }

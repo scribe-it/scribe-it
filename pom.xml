@@ -90,6 +90,22 @@
 			<artifactId>langchain4j-open-ai-spring-boot4-starter</artifactId>
 			<version>1.15.0-beta25</version>
 		</dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-websocket</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct</artifactId>
+            <version>1.6.3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct-processor</artifactId>
+            <version>1.6.3</version>
+            <scope>provided</scope>
+        </dependency>
 	</dependencies>
 
 	<!-- Eliminado dependencyManagement con Spring AI para evitar conflictos de descarga -->
@@ -124,6 +140,11 @@
 									<groupId>org.projectlombok</groupId>
 									<artifactId>lombok</artifactId>
 								</path>
+                                <path>
+                                    <groupId>org.mapstruct</groupId>
+                                    <artifactId>mapstruct-processor</artifactId>
+                                    <version>1.6.3</version>
+                                </path>
 							</annotationProcessorPaths>
 						</configuration>
 					</execution>
