@@ -1,5 +1,6 @@
 package grupo2.docubot.models;
 
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -10,7 +11,19 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 public class Message {
-    private String user;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long id;
+
+    @Column(nullable = false)
     private String content;
-    private LocalDateTime messageDate;
+
+    private MessageType type;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    private LocalDateTime timestamp;
 }

@@ -4,23 +4,27 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Getter
-@Setter
+import java.util.List;
+
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Comment {
+public class UseCase {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private User fromUser;
+    private String actor;
 
-    private User toUser;
+    private String precondition;
 
-    private String text;
+    private String trigger;
+
+    private List<String> main_flow;
+
+    private String poscondition;
 }

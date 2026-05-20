@@ -85,6 +85,11 @@
 			<artifactId>spring-boot-starter-webmvc-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>dev.langchain4j</groupId>
+			<artifactId>langchain4j-open-ai-spring-boot4-starter</artifactId>
+			<version>1.15.0-beta25</version>
+		</dependency>
 	</dependencies>
 
 	<!-- Eliminado dependencyManagement con Spring AI para evitar conflictos de descarga -->
