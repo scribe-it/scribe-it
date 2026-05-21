@@ -1,4 +1,37 @@
 import { useEffect, useRef, useState } from "react";
+import { useStompClient, useSubscription } from "react-stomp-hooks";
+import { Button } from "./ui/button";
+
+export const SubscribingComponent = () => {
+  const [messages, setMessages] = useState<string[]>(["No message received yet"]);
+
+  const chatId = 1; 
+
+  useSubscription("/topic/chat/" + chatId,  (message) => {
+    const newMsg = JSON.parse(message.body);
+    setMessages((prev) => [...prev, newMsg]);
+  });
+
+  return <div>Last Message: {messages[messages.length - 1]}</div>;
+}
+
+export const SendingMessages = () => {
+  const stompClient = useStompClient();
+
+  const sendMessage = () => {
+    if (stompClient) {
+      stompClient.publish({
+        destination: "/app/chat-send",
+        body: JSON.stringify({ chatId: 1, senderId: 1, text: "Echo 123" }),
+      });
+      
+    } else {
+      //Handle error
+    }
+  };
+
+  return <Button onClick={sendMessage}>Send Message</Button>;
+}
 
 type Message = {
   id: number;

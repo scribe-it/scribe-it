@@ -1,5 +1,7 @@
 package grupo2.docubot.dto.request;
 
+import java.time.LocalDateTime;
+
 import grupo2.docubot.models.MessageType;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -10,6 +12,10 @@ import lombok.Getter;
 @Getter
 public class MessageRequestDto {
 
+
+    @NotNull
+    private Long chatId;
+    
     @NotBlank
     private String content;
 
@@ -18,4 +24,5 @@ public class MessageRequestDto {
 
     @NotNull
     private Long senderId;
+
 }

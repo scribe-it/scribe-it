@@ -1,17 +1,19 @@
-    package grupo2.docubot.mappers;
+package grupo2.docubot.mappers;
 
-    import grupo2.docubot.dto.request.MessageRequestDto;
-    import grupo2.docubot.dto.response.MessageResponseDto;
-    import grupo2.docubot.models.Message;
-    import org.mapstruct.Mapper;
-    import org.mapstruct.Mapping;
+import grupo2.docubot.dto.request.MessageRequestDto;
+import grupo2.docubot.dto.response.MessageResponseDto;
+import grupo2.docubot.models.Message;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
-    @Mapper(componentModel = "spring")
-    public interface MessageMapper {
+@Mapper(componentModel = "spring")
+public interface MessageMapper {
 
-        Message toEntity(MessageRequestDto messageRequestDto);
+    @Mapping(target="chat.id", source="chatId")
+    @Mapping(target="user.id", source="senderId")
+    Message toEntity(MessageRequestDto messageRequestDto);
 
-        @Mapping(target="user_id", source="user.id")
-        MessageResponseDto toDto(Message message);
+    @Mapping(target="user_id", source="user.id")
+    MessageResponseDto toDto(Message message);
 
-    }
+}

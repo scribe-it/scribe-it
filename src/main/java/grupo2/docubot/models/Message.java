@@ -20,6 +20,7 @@ public class Message {
     @Column(nullable = false)
     private String content;
 
+    @Enumerated(EnumType.STRING)
     private MessageType type;
 
     @ManyToOne(optional = false)
@@ -28,8 +29,15 @@ public class Message {
 
     private LocalDateTime timestamp;
 
-    @Column(nullable = false)
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "chat_id", nullable = false)
     private Chat chat;
 
     private Boolean read;
+
+    @PrePersist
+    protected void onCreate() {
+        this.timestamp = LocalDateTime.now();
+        this.read = false;
+    }
 }

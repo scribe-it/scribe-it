@@ -19,6 +19,11 @@ public class Chat {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @OneToOne
+    private Department department;
+
+    private String description;
+
     private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "chat")
@@ -32,5 +37,9 @@ public class Chat {
     )
     private List<User> users = new ArrayList<>();
 
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+    }
 }
 

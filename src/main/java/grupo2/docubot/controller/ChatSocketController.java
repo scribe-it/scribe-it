@@ -20,10 +20,9 @@ public class ChatSocketController {
 
         MessageResponseDto savedMessage = messageService.createMessage(messageRequestDto);
 
-        simpMessagingTemplate.convertAndSendToUser(
-                messageRequestDto.getSenderId().toString(),
-                "/queue/messages/",
-                savedMessage
+        simpMessagingTemplate.convertAndSend(
+            "/topic/chat/" + messageRequestDto.getChatId(),
+            savedMessage
         );
 
 
