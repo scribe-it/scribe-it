@@ -17,9 +17,9 @@ public class MessageController {
     private final MessageService messageService;
 
     @GetMapping("/chat/{id}")
-    public ResponseEntity<List<MessageResponseDto>> getAllByChatId(@PathVariable Long chatId){
+    public ResponseEntity<List<MessageResponseDto>> getAllByChatId(@PathVariable Long id){
 
-        List<MessageResponseDto> chat_messages = messageService.getAllByChatId(chatId);
+        List<MessageResponseDto> chat_messages = messageService.getAllByChatId(id);
 
         return ResponseEntity.ok().body(chat_messages);
 
