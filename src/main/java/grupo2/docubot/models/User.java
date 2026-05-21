@@ -32,4 +32,6 @@ public class User {
     @ManyToMany
     @JoinTable
     private List<Chat> chats;
+
+    private String department;
 }
