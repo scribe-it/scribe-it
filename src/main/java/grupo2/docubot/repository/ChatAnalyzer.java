@@ -5,7 +5,6 @@ import dev.langchain4j.service.UserMessage;
 import dev.langchain4j.service.V;
 import grupo2.docubot.dto.internal.AnalysisResponse;
 
-@AiService
 public interface ChatAnalyzer {
 
     @SystemMessage("""
