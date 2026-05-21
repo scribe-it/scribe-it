@@ -40,13 +40,31 @@ public class MessageService {
 
     }
 
-    public List<MessageResponseDto> getAllByChatId(Long chatId) {
+    public MessageResponseDto forwardMessage(Long originalMessageId, Long toChatId, Long senderId) {
 
-        List<Message> chat_messages = messageRepository.findAllByChatId(chatId);
+        Message originalMessage = messageRepository.findById(originalMessageId)
+                .orElseThrow(() -> new RuntimeException("Original message not found with id: " + originalMessageId));
 
-        return chat_messages.stream()
-                .map(messageMapper::toDto)
-                .toList();
+        Chat toChat = chatService.getChatById(toChatId)
+                .orElseThrow(() -> new RuntimeException("Chat not found with id: " + toChatId));
+
+        User sender = userService.getUserById(senderId)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + senderId));
+
+        Message forwardedMessage = new Message();
+        forwardedMessage.setContent(originalMessage.getContent());
+        forwardedMessage.setType(originalMessage.getType());
+
+        forwardedMessage.setChat(toChat);
+        forwardedMessage.setUser(sender);
+
+        Message savedMessage = messageRepository.save(forwardedMessage);
+
+        /*
+            lógica de qué hago con el mensaje reenviado al chat dedicado
+        */
+
+        return messageMapper.toDto(savedMessage);
     }
 
 }

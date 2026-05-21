@@ -1,12 +1,14 @@
 package grupo2.docubot.controller;
 
+import grupo2.docubot.dto.request.MessageRequestDto;
 import grupo2.docubot.dto.response.MessageResponseDto;
+import grupo2.docubot.models.Chat;
+import grupo2.docubot.models.Message;
 import grupo2.docubot.services.MessageService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -24,4 +26,16 @@ public class MessageController {
         return ResponseEntity.ok().body(chat_messages);
 
     }
+
+    @PostMapping("/chats/messages/forward")
+    public ResponseEntity<MessageResponseDto> forwardMessage(@RequestParam Long originalMessageId,
+                                                             @RequestParam Long toChatId,
+                                                             @RequestParam Long senderId) {
+
+        MessageResponseDto forwarded = messageService.forwardMessage(originalMessageId, toChatId, senderId);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(forwarded);
+    }
+
+
 }

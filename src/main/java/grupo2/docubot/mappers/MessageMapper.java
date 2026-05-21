@@ -16,4 +16,5 @@ public interface MessageMapper {
     @Mapping(target="user_id", source="user.id")
     MessageResponseDto toDto(Message message);
 
+
 }
