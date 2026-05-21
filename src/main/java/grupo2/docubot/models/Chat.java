@@ -19,8 +19,7 @@ public class Chat {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
-    private Department department;
+    private String department;
 
     private String description;
 

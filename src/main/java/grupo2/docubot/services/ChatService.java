@@ -36,4 +36,12 @@ public class ChatService {
                 .toList();
     }
 
+    public Chat getById(Long id) {
+
+        Chat chat = chatRepository.findById(id)
+                .orElseThrow();
+
+        return chat;
+
+    }
 }

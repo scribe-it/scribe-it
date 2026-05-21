@@ -23,10 +23,9 @@ public class MessageService {
 
     public MessageResponseDto createMessage(MessageRequestDto messageRequestDto) {
 
-        Chat chat = chatService.getChatById(messageRequestDto.getChatId())
-            .orElseThrow(() -> new RuntimeException("Chat not found with id: " + messageRequestDto.getChatId()));
+        Chat chat = chatService.getById(messageRequestDto.getChatId());
 
-        User sender = userService.getUserById(messageRequestDto.getSenderId())
+        User sender = userService.getById(messageRequestDto.getSenderId())
             .orElseThrow(() -> new RuntimeException("User not found with id: " + messageRequestDto.getSenderId()));
 
         Message newMessage = messageMapper.toEntity(messageRequestDto);

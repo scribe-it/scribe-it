@@ -6,13 +6,11 @@ import grupo2.docubot.models.Chat;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = { UserMapper.class, MessageMapper.class })
 public interface ChatMapper {
 
     Chat toEntity(ChatRequestDto chatRequestDto);
 
-    @Mapping(target="user_id", source="user.id")
     ChatResponseDto toDto(Chat chat);
-
 
 }
