@@ -1,8 +1,6 @@
 package grupo2.docubot.dto.request;
 
-import java.time.LocalDateTime;
-
-import grupo2.docubot.models.MessageType;
+import grupo2.docubot.models.enums.MessageType;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotBlank;

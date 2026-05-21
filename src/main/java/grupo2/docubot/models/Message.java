@@ -1,5 +1,6 @@
 package grupo2.docubot.models;
 
+import grupo2.docubot.models.enums.MessageType;
 import jakarta.persistence.*;
 import lombok.*;
 
