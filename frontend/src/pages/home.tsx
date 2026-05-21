@@ -4,7 +4,7 @@ import Layout from "@/components/layout"
 const Home = () => {
   return (
     <Layout>
-      <ChatWindow currentUserId={1} companionName={"German"}/>
+      <ChatWindow />
     </Layout>
   )
 }

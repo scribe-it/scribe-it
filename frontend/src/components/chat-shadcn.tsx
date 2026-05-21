@@ -1,77 +1,60 @@
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { SendHorizontal } from "lucide-react";
-
-// Supongamos que tu instancia de socket viene de un hook o contexto externo
-// import { useSocket } from "@/context/SocketContext";
+import { useStompClient, useSubscription } from "react-stomp-hooks";
 
 interface Message {
-  id: string;
-  text: string;
-  senderId: string;
-  senderName: string;
+  id: number;
+  content: string;
+  user_id: number;
+  read: boolean;
   timestamp: string;
 }
 
-export function ChatWindow({ currentUserId, companionName }) {
-  const [messages, setMessages] = useState<Message[]>([]);
+export function ChatWindow() {
   const [inputValue, setInputValue] = useState("");
-  const [isOnline, setIsOnline] = useState(false);
-  // const { socket } = useSocket();
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [isOnline] = useState(true); 
 
-  // Escuchar mensajes entrantes del socket
-  useEffect(() => {
-    /* 
-    socket.on("receive_message", (newMessage: Message) => {
-      setMessages((prev) => [...prev, newMessage]);
-    });
+  const chatId = 1; 
 
-    socket.on("user_status_change", (status: boolean) => {
-      setIsOnline(status);
-    });
+  useSubscription("/topic/chat/" + chatId,  (message) => {
+    const newMsg = JSON.parse(message.body);
+    setMessages((prev) => [...prev, newMsg]);
+  });
 
-    return () => {
-      socket.off("receive_message");
-      socket.off("user_status_change");
-    };
-    */
-  }, []);
+  const stompClient = useStompClient();
 
   const handleSendMessage = () => {
-    if (!inputValue.trim()) return;
-
-    const messageData = {
-      id: crypto.randomUUID(),
-      text: inputValue,
-      senderId: currentUserId,
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-    };
-
-    // 1. Emitir por el socket al servidor
-    // socket.emit("send_message", messageData);
-
-    // 2. Actualizar la UI localmente
-    setMessages((prev) => [...prev, messageData]);
-    setInputValue("");
+    if (stompClient) {
+      stompClient.publish({
+        destination: "/app/chat-send",
+        body: JSON.stringify({ chatId: 1, senderId: 1, content: "Echo 123", type: "TEXT" }),
+      });
+      
+    } else {
+      //Handle error
+    }
   };
-
   return (
     <Card className="w-full max-w-[50vw] min-w-[50vw] mx-auto h-[600px] flex flex-col">
       {/* Encabezado con estado en tiempo real */}
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3 border-b">
         <div className="flex items-center space-x-3">
           <Avatar>
-            <AvatarFallback>{companionName[0]}</AvatarFallback>
+            {/* <AvatarFallback>{companionName[0]}</AvatarFallback> */}
+            <AvatarFallback>{"Germán"}</AvatarFallback>
           </Avatar>
           <div>
-            <p className="text-sm font-medium leading-none">{companionName}</p>
+            <p className="text-sm font-medium leading-none">{"Germán"}</p>
             <p className="text-xs text-muted-foreground mt-1">
-              {isOnline ? <Badge variant="success">En línea</Badge> : <Badge variant="secondary">Desconectado</Badge>}
+              {/* {isOnline ? <Badge variant="success">En línea</Badge> : <Badge variant="secondary">Desconectado</Badge>} */}
+              {isOnline ? <Badge>En línea</Badge> : <Badge variant="secondary">Desconectado</Badge>}
             </p>
           </div>
         </div>
@@ -82,13 +65,14 @@ export function ChatWindow({ currentUserId, companionName }) {
         <ScrollArea className="h-full pr-4">
           <div className="flex flex-col space-y-4">
             {messages.map((msg) => {
-              const isMe = msg.senderId === currentUserId;
+              // const isMe = msg.senderId === currentUserId;
+              const isMe = true; // Solo para pruebas, asume que todos los mensajes son del usuario
               return (
                 <div key={msg.id} className={`flex ${isMe ? "justify-end" : "justify-start"}`}>
                   <div className={`max-w-[70%] rounded-lg px-3 py-2 text-sm ${
                     isMe ? "bg-primary text-primary-foreground rounded-tr-none" : "bg-muted rounded-tl-none"
                   }`}>
-                    <p>{msg.text}</p>
+                    <p>{msg.content}</p>
                     <span className="text-[10px] block text-right mt-1 opacity-70">{msg.timestamp}</span>
                   </div>
                 </div>
