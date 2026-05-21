@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>4.0.5</version> <!-- Cambiado de 4.0.5 a la versión actual estable -->
+		<version>4.0.5</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>grupo2</groupId>
@@ -50,10 +50,17 @@
 		<dependency>
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-			<version>2.8.1</version> <!-- Versión corregida para Spring Boot 3 -->
+			<version>2.8.1</version>
 		</dependency>
 
-		<!-- LANGCHAIN4J (Agregado correctamente en dependencies) -->
+		<!-- ======================================================= -->
+		<!-- DEPENDENCIAS DE LANGCHAIN4J UNIFICADAS                  -->
+		<!-- ======================================================= -->
+		<dependency>
+			<groupId>dev.langchain4j</groupId>
+			<artifactId>langchain4j-core</artifactId>
+			<version>${langchain4j.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>dev.langchain4j</groupId>
 			<artifactId>langchain4j</artifactId>
@@ -64,6 +71,7 @@
 			<artifactId>langchain4j-open-ai</artifactId>
 			<version>${langchain4j.version}</version>
 		</dependency>
+		<!-- ======================================================= -->
 
 		<dependency>
 			<groupId>org.projectlombok</groupId>
@@ -86,29 +94,22 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>dev.langchain4j</groupId>
-			<artifactId>langchain4j-open-ai-spring-boot4-starter</artifactId>
-			<version>1.15.0-beta25</version>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-websocket</artifactId>
 		</dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-websocket</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.mapstruct</groupId>
-            <artifactId>mapstruct</artifactId>
-            <version>1.6.3</version>
-        </dependency>
+		<dependency>
+			<groupId>org.mapstruct</groupId>
+			<artifactId>mapstruct</artifactId>
+			<version>1.6.3</version>
+		</dependency>
 
-        <dependency>
-            <groupId>org.mapstruct</groupId>
-            <artifactId>mapstruct-processor</artifactId>
-            <version>1.6.3</version>
-            <scope>provided</scope>
-        </dependency>
+		<dependency>
+			<groupId>org.mapstruct</groupId>
+			<artifactId>mapstruct-processor</artifactId>
+			<version>1.6.3</version>
+			<scope>provided</scope>
+		</dependency>
 	</dependencies>
-
-	<!-- Eliminado dependencyManagement con Spring AI para evitar conflictos de descarga -->
 
 	<build>
 		<plugins>
@@ -140,11 +141,11 @@
 									<groupId>org.projectlombok</groupId>
 									<artifactId>lombok</artifactId>
 								</path>
-                                <path>
-                                    <groupId>org.mapstruct</groupId>
-                                    <artifactId>mapstruct-processor</artifactId>
-                                    <version>1.6.3</version>
-                                </path>
+								<path>
+									<groupId>org.mapstruct</groupId>
+									<artifactId>mapstruct-processor</artifactId>
+									<version>1.6.3</version>
+								</path>
 							</annotationProcessorPaths>
 						</configuration>
 					</execution>
