@@ -38,10 +38,8 @@ public class ChatService {
 
     public Chat getById(Long id) {
 
-        Chat chat = chatRepository.findById(id)
-                .orElseThrow();
-
-        return chat;
+        return chatRepository.findById(id)
+                .orElseThrow(()-> new RuntimeException("El Chat con id "+ id +" no fue encontrado"));
 
     }
 }
