@@ -1,11 +1,9 @@
 package grupo2.docubot.models;
 
-import grupo2.docubot.models.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.web.bind.annotation.Mapping;
 
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -22,16 +20,26 @@ public class User {
     @Column(nullable = false)
     private String firstName;
 
+    @Column(nullable = false)
     private String lastName;
 
-    private Role role;
+    @Column(unique = true)
+    private String email;
+
+    @ManyToMany
+    @JoinTable(
+            name = "user_role",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<Role> role;
 
     @Column(nullable = false)
     private String password;
 
     @ManyToMany
     @JoinTable
-    private List<Chat> chats;
+    private Set<Chat> chats;
 
-    private String department;
+
 }
