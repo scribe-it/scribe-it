@@ -1,6 +1,7 @@
 package grupo2.docubot.exceptions.handler;
 
 import grupo2.docubot.exceptions.response.BadCredentialsException;
+import grupo2.docubot.exceptions.response.RecourseNotFound;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -29,6 +30,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<String> handleBadCredentialsException(BadCredentialsException ex){
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(RecourseNotFound.class)
+    public ResponseEntity<String> handleRecourseNotFound(RecourseNotFound ex){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
 
 }

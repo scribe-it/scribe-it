@@ -19,9 +19,12 @@ public class Chat {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String department;
 
+    @Column(nullable = false)
     private String description;
+
 
     private LocalDateTime createdAt;
 

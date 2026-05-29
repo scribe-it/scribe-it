@@ -8,11 +8,12 @@ import java.util.Set;
 @Entity
 @Getter @Setter @AllArgsConstructor @NoArgsConstructor @Builder
 public class Role {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(nullable = false)
     private String name;
-    @OneToMany
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "role_permisson",
             joinColumns=@JoinColumn(name = "role_id"),

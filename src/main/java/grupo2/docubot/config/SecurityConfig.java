@@ -33,10 +33,13 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/auth/**").permitAll()
 
                         // Todo lo demás bajo api requiere obligatoriamente estar logueado
-                        .requestMatchers("/api/**").authenticated()
+                        .requestMatchers("/api/v1/**").authenticated()
+
+                        //Momentaneamente dejamos los endpoints de chat sin restricciones
+                        .requestMatchers("/chat").authenticated()
 
                         // Cualquier otra ruta residual fuera de /api
-                        .anyRequest().authenticated()
+                        .anyRequest().denyAll()
                 )
 
 
