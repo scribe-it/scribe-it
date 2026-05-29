@@ -34,11 +34,11 @@ public class Message {
     @JoinColumn(name = "chat_id", nullable = false)
     private Chat chat;
 
-    private Boolean read;
+    private boolean isRead;
 
     @PrePersist
     protected void onCreate() {
         this.timestamp = LocalDateTime.now();
-        this.read = false;
+        this.isRead = false;
     }
 }

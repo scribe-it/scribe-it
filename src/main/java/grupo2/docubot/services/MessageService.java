@@ -63,4 +63,10 @@ public class MessageService {
         return messageMapper.toDto(savedMessage);
     }
 
+    public List<MessageResponseDto> getAllByChatId(Long chatId){
+        return messageRepository.findAllByChatId(chatId).stream()
+                .map(messageMapper::toDto)
+                .toList();
+    }
+
 }

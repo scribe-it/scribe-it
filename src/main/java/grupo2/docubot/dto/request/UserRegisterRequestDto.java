@@ -10,11 +10,11 @@ import java.util.Set;
 public class UserRegisterRequestDto {
 
     @NotBlank(message="El nombre es requerido")
-    @Min(value = 2,message = "El nombbre no puede tener menos de 2 caracteres")
+    @Size(min = 2,message = "El nombbre no puede tener menos de 2 caracteres")
     private String firstName;
 
     @NotBlank(message="El apellido es requerido")
-    @Min(value = 2,message = "El apellido no puede tener menos de 2 caracteres")
+    @Size(min = 2,message = "El apellido no puede tener menos de 2 caracteres")
     private String lastName;
 
     @NotBlank(message = "El email es requerido")
@@ -22,7 +22,8 @@ public class UserRegisterRequestDto {
     private String email;
 
     @NotNull(message = "El rol es requerido")
-    private Set<Role> role;
+    @NotEmpty(message = "Debe seleccionar al menos un rol")
+    private Set<Long> roleId;
 
     @NotBlank(message = "La contraseña es requerida")
     @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[@#$%^&+=!]).+$",
