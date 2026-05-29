@@ -25,7 +25,7 @@ public class MessageService {
 
         Chat chat = chatService.getById(messageRequestDto.getChatId());
 
-        User sender = userService.getById(messageRequestDto.getSenderId());
+        User sender = userService.findById(messageRequestDto.getSenderId());
 
         Message newMessage = messageMapper.toEntity(messageRequestDto);
 
@@ -45,7 +45,7 @@ public class MessageService {
 
         Chat toChat = chatService.getById(toChatId);
 
-        User sender = userService.getById(senderId);
+        User sender = userService.findById(senderId);
 
         Message forwardedMessage = new Message();
         forwardedMessage.setContent(originalMessage.getContent());
