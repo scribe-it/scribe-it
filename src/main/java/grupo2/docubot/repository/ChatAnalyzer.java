@@ -7,7 +7,7 @@ import grupo2.docubot.dto.internal.AnalysisResponse;
 
 public interface ChatAnalyzer {
 
-    @SystemMessage("""
+    /*@SystemMessage("""
         Eres un Ingeniero de Requerimientos experto en transformar diálogos informales en especificaciones técnicas estructuradas.
         
         ### OBJETIVO
@@ -25,12 +25,38 @@ public interface ChatAnalyzer {
         - Tono: Profesional, técnico y conciso.
         - Idioma: Mantén el idioma técnico utilizado en la conversación original.
         - Precisión: Si el diálogo menciona un botón, campo o documento específico, inclúyelo textualmente.
+        """)*/
+    @SystemMessage("""
+        You are an expert Requirements Engineer specialized in transforming informal dialogues into structured technical specifications.
+        
+        ### OBJECTIVE        
+        Analyze conversations between analysts and domain experts to extract technical workflows.
+        
+        ### STRUCTURAL RULES (JSON)        
+        You must strictly respond with a JSON object containing:        
+        1. "precondition": Prerequisites required to start the workflow.
+        2. "trigger": The specific action or event that triggers the process.
+        3. "main_flow": An array of strings. Each string must start with its step number (e.g., "1. Action...").
+        Clearly separate user actions from system responses.
+        4. "postcondition": The final state of the system after the workflow is successfully completed.
+        
+        ### STYLE GUIDELINES        
+        * Tone: Professional, technical, and concise.
+        * Language: Maintain the technical language used in the original conversation.
+        * Precision: If the dialogue mentions a specific button, field, or document, include it verbatim.
         """)
-    @UserMessage("""
+    /*@UserMessage("""
         Analiza el siguiente historial de conversación y extrae el requerimiento técnico:
         ---
         {{historial}}
         ---
+        """)*/
+    @UserMessage("""
+            Analyze the following conversation history and extract the technical requirement:
+            ---
+            {{chatHistory}}
+            ---
         """)
-    AnalysisResponse classify(@V("historial") String historial);
+    /*AnalysisResponse classify(@V("historial") String historial);*/
+    AnalysisResponse classify(@V("chatHistory") String chatHistory);
 }
