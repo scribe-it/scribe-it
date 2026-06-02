@@ -1,12 +1,12 @@
 package grupo2.docubot.config;
 
 import grupo2.docubot.models.CustomUserDetails;
+import grupo2.docubot.services.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import grupo2.docubot.config.security.JwtService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,6 +25,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
 
     private final UserDetailsService userDetailsService;
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        // El handshake WebSocket no debe pasar por el filtro JWT
+        return request.getRequestURI().startsWith("/chat");
+    }
 
     @Override
     protected  void doFilterInternal(HttpServletRequest request,

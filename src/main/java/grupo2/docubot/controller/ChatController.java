@@ -40,4 +40,6 @@ public class ChatController {
     public ResponseEntity<List<User>> addUser(@PathVariable Long chatId,@PathVariable Long userId){
         return ResponseEntity.ok(chatService.addUser(chatId,userId));
     }
+
+
 }
