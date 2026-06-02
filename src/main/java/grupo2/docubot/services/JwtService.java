@@ -1,4 +1,4 @@
-package grupo2.docubot.config.security;
+package grupo2.docubot.services;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

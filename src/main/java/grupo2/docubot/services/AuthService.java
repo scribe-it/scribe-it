@@ -15,7 +15,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import grupo2.docubot.config.security.JwtService;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -51,9 +50,10 @@ public class AuthService {
         return new AuthResponseDto(token);
     }
 
-    /* Metodo anteriormente usado para cargar el analista en el bd
-    public AuthResponse register(UserRegisterRequestDto registerRequest){
+    /* Metodo anteriormente usado para cargar el analista en el bd}*/
+    public AuthResponseDto register(UserRegisterRequestDto registerRequest){
         List<Role> roles = roleRepository.findAllById(registerRequest.getRoleId());
+        System.out.println(roles);
 
         if (roles.isEmpty()) {
             throw new RuntimeException("Debe seleccionar al menos un rol válido.");
@@ -72,8 +72,8 @@ public class AuthService {
 
         String token = jwtService.generateToken(userDetails);
 
-        return new AuthResponse(token);
-    }*/
+        return new AuthResponseDto(token);
+    }
 
     // Metodo para cargar user con cualquier rol
     public UserResponseRegisterDto registerByAdmin(UserRegisterRequestDto registerRequest){
