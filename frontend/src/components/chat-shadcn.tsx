@@ -24,6 +24,7 @@ export function ChatWindow() {
   const chatId = 1; 
 
   useSubscription("/topic/chat/" + chatId,  (message) => {
+     console.log("[TOPIC]2", message.body);
     const newMsg = JSON.parse(message.body);
     setMessages((prev) => [...prev, newMsg]);
   });
@@ -34,9 +35,9 @@ export function ChatWindow() {
     if (stompClient) {
       stompClient.publish({
         destination: "/app/chat-send",
-        body: JSON.stringify({ chatId: 1, senderId: 1, content: "Echo 123", type: "TEXT" }),
+        body: JSON.stringify({ chatId: 1, senderId: 1, content: inputValue, type: "TEXT" }),
       });
-      
+      setInputValue("");
     } else {
       //Handle error
     }
