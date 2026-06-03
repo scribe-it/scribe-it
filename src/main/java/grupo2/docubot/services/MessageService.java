@@ -10,8 +10,6 @@ import grupo2.docubot.repository.MessageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 @RequiredArgsConstructor
 public class MessageService {
@@ -25,8 +23,7 @@ public class MessageService {
 
         Chat chat = chatService.getById(messageRequestDto.getChatId());
 
-        User sender = userService.getById(messageRequestDto.getSenderId())
-            .orElseThrow(() -> new RuntimeException("User not found with id: " + messageRequestDto.getSenderId()));
+        User sender = userService.findById(messageRequestDto.getSenderId());
 
         Message newMessage = messageMapper.toEntity(messageRequestDto);
 
