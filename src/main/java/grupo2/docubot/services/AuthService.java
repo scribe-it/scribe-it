@@ -89,6 +89,7 @@ public class AuthService {
                 .email(registerRequest.getEmail())
                 .role(new HashSet<>(roles))
                 .password(passwordEncoder.encode(registerRequest.getPassword()))
+                .department(registerRequest.getDepartment())
                 .chats(new HashSet<>())
                 .build();
 

@@ -23,7 +23,7 @@ public class MessageService {
 
     public MessageResponseDto createMessage(MessageRequestDto messageRequestDto) {
 
-        Chat chat = chatService.getById(messageRequestDto.getChatId());
+        Chat chat = chatService.getEntityById(messageRequestDto.getChatId());
 
         User sender = userService.getById(messageRequestDto.getSenderId());
 
@@ -43,7 +43,7 @@ public class MessageService {
         Message originalMessage = messageRepository.findById(originalMessageId)
                 .orElseThrow(() -> new RuntimeException("Original message not found with id: " + originalMessageId));
 
-        Chat toChat = chatService.getById(toChatId);
+        Chat toChat = chatService.getEntityById(toChatId);
 
         User sender = userService.getById(senderId);
 

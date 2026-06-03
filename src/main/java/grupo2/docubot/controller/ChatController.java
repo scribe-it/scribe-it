@@ -15,7 +15,7 @@ import retrofit2.http.PATCH;
 import java.util.List;
 
 @RestController
-@RequestMapping("/chat")
+@RequestMapping("/api/v1/chat")
 @RequiredArgsConstructor
 public class ChatController {
 
@@ -39,6 +39,11 @@ public class ChatController {
     @PreAuthorize("hasRole('ANALISTA')")
     public ResponseEntity<List<User>> addUser(@PathVariable Long chatId,@PathVariable Long userId){
         return ResponseEntity.ok(chatService.addUser(chatId,userId));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ChatResponseDto> getChatById(@PathVariable Long id) {
+        return ResponseEntity.ok(chatService.getById(id));
     }
 
 

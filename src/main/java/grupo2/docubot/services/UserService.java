@@ -5,6 +5,8 @@ import grupo2.docubot.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -17,5 +19,9 @@ public class UserService {
     public User getById(Long id){
         return repository.findById(id)
                 .orElseThrow(()->new RuntimeException("El User con id "+ id +" no fue encontrado"));
+    }
+
+    public List<User> getByDepartment(String department) {
+        return repository.findByDepartment(department);
     }
 }

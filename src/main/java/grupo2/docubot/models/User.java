@@ -26,6 +26,9 @@ public class User {
     @Column(unique = true)
     private String email;
 
+    @Column(nullable = false)
+    private String department;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_role",
@@ -37,9 +40,7 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    @ManyToMany
-    @JoinTable
+    @ManyToMany(mappedBy="users")
     private Set<Chat> chats;
-
 
 }

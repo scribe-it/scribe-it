@@ -29,4 +29,7 @@ public class UserRegisterRequestDto {
     @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[@#$%^&+=!]).+$",
             message = "La contraseña debe contener al menos una letra, un número y un carácter especial")
     private String password;
+
+    @NotBlank(message = "El departamento es requerido")
+    private String department;
 }

@@ -9,7 +9,7 @@ import lombok.Getter;
 public class ChatRequestDto {
 
     @NotNull(message = "El departamento es requerido")
-    private Long departmentId;
+    private String department;
 
     @NotBlank(message = "La descripcion es requerida")
     private String description;
