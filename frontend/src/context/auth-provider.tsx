@@ -13,9 +13,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
     if (!res.ok) throw new Error("Credenciales inválidas");
     const data = await res.json();
+    localStorage.setItem("token", data.token);
     setToken(data.token);
   };
-  const logout = () => setToken(null);
+  const logout = () => {
+    setToken(null);
+    localStorage.removeItem("token");
+  }
   return (
     <AuthContext.Provider value={{ token, login, logout }}>
       {children}
