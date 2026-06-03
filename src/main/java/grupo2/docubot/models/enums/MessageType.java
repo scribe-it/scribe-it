@@ -4,5 +4,6 @@ public enum MessageType {
     AUDIO,
     TEXT,
     VIDEO,
-    IMAGE
+    IMAGE,
+    HOLA
 }
