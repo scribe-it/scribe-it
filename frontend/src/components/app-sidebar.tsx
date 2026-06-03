@@ -11,7 +11,7 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
   } from "@/components/ui/sidebar"
-import { ChevronDown, Code, FileText, MessageSquare, Plus } from "lucide-react"
+import { ChevronDown, Code, FileText, MessageSquare, Plus, UserPlus } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu"
   
 const items = [
@@ -20,7 +20,7 @@ const items = [
   {name:"publicaciones", url: "publicaciones", icon: FileText},
 ]
 
-  export function AppSidebar() {
+  export function AppSidebar({ setView }: { setView?: React.Dispatch<React.SetStateAction<"chat" | "register">> }) {
     return (
       <Sidebar>
           <SidebarHeader>
@@ -51,15 +51,23 @@ const items = [
           <SidebarGroupContent></SidebarGroupContent>
           <SidebarMenu>
             {items.map((project) => (
-              <SidebarMenuItem key={project.name}>
+              <SidebarMenuItem key={project.name} className="py-4">
                 <SidebarMenuButton asChild>
-                  <a href={project.url}>
+                  <a href={project.url} >
                     <project.icon />
                     <span>{project.name}</span>
                   </a>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             ))}
+            {setView && (
+              <SidebarMenuItem>
+                <SidebarMenuButton onClick={() => setView("register")}>
+                  <UserPlus />
+                  <span>Registrar usuario</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            )}
           </SidebarMenu>
         </SidebarGroup>
           <SidebarGroup />
