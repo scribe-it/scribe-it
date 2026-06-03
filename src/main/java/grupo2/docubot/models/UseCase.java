@@ -22,6 +22,7 @@ public class UseCase {
 
     private String precondition;
 
+    @Column(name = "trigger_event")
     private String trigger;
 
     @Column(nullable = false)

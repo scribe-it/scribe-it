@@ -19,5 +19,6 @@ public class MessageResponseDto {
 
     private LocalDateTime timestamp;
 
+    private Long chat_id;
 
 }

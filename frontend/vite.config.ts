@@ -15,4 +15,11 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     }
   },
+  server: {
+    proxy: {
+      '/api/v1': { target: 'http://localhost:8080', changeOrigin: true },
+      '/chat': { target: 'http://localhost:8080', changeOrigin: true },
+      '/ws-stomp': { target: 'http://localhost:8080', ws: true },
+    }
+  }
 })

@@ -1,14 +1,17 @@
 package grupo2.docubot.dto.request;
 
 import jakarta.persistence.Column;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 
 @Getter
 public class ChatRequestDto {
 
-    @Column(nullable = false)
-    private Long departmentId;
+    @NotNull(message = "El departamento es requerido")
+    private String department;
 
+    @NotBlank(message = "La descripcion es requerida")
     private String description;
 
 }

@@ -24,4 +24,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Modifying(clearAutomatically = true)
     @Query("UPDATE User u SET u.department = :newDepartment WHERE u.id = :id")
     int updateDepartmentById(@Param("id") Long id, @Param("newDepartment") String newDepartment);
+
+    Optional<User> findByEmail(String email);
+
+    List<User> findByDepartment(String department);
+
+    @Query("SELECT DISTINCT u.department FROM User u ORDER BY u.department")
+    List<String> findDistinctDepartments();
 }

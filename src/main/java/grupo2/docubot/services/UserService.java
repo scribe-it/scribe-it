@@ -10,7 +10,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -60,5 +60,13 @@ public class UserService {
 
         User updatedUser = userRepository.save(user);
         return userMapper.toDto(updatedUser);
+    private final UserRepository repository;
+
+    public User save(User user){
+        return  repository.save(user);
+    }
+
+    public List<User> getByDepartment(String department) {
+        return repository.findByDepartment(department);
     }
 }

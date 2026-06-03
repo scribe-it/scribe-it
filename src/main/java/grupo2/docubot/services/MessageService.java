@@ -21,9 +21,9 @@ public class MessageService {
 
     public MessageResponseDto createMessage(MessageRequestDto messageRequestDto) {
 
-        Chat chat = chatService.getById(messageRequestDto.getChatId());
+        Chat chat = chatService.getEntityById(messageRequestDto.getChatId());
 
-        User sender = userService.findById(messageRequestDto.getSenderId());
+        User sender = userService.getById(messageRequestDto.getSenderId());
 
         Message newMessage = messageMapper.toEntity(messageRequestDto);
 
@@ -41,11 +41,9 @@ public class MessageService {
         Message originalMessage = messageRepository.findById(originalMessageId)
                 .orElseThrow(() -> new RuntimeException("Original message not found with id: " + originalMessageId));
 
-        Chat toChat = chatService.getChatById(toChatId)
-                .orElseThrow(() -> new RuntimeException("Chat not found with id: " + toChatId));
+        Chat toChat = chatService.getEntityById(toChatId);
 
-        User sender = userService.getUserById(senderId)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + senderId));
+        User sender = userService.getById(senderId);
 
         Message forwardedMessage = new Message();
         forwardedMessage.setContent(originalMessage.getContent());
@@ -61,6 +59,12 @@ public class MessageService {
         */
 
         return messageMapper.toDto(savedMessage);
+    }
+
+    public List<MessageResponseDto> getAllByChatId(Long chatId){
+        return messageRepository.findAllByChatId(chatId).stream()
+                .map(messageMapper::toDto)
+                .toList();
     }
 
 }
