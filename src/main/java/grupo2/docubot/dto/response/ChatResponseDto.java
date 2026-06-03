@@ -9,7 +9,7 @@ public class ChatResponseDto {
 
     private Long id;
 
-    private String name;
+    private String department;
     
     private String description;
 

@@ -25,7 +25,6 @@ public class Chat {
     @Column(nullable = false)
     private String description;
 
-
     private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "chat")
@@ -43,5 +42,6 @@ public class Chat {
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
     }
+
 }
 
