@@ -60,13 +60,14 @@ public class UserService {
 
         User updatedUser = userRepository.save(user);
         return userMapper.toDto(updatedUser);
-    private final UserRepository repository;
+
+    }
 
     public User save(User user){
-        return  repository.save(user);
+        return userRepository.save(user);
     }
 
     public List<User> getByDepartment(String department) {
-        return repository.findByDepartment(department);
+        return userRepository.findByDepartment(department);
     }
 }

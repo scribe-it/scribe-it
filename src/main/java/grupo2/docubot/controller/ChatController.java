@@ -2,15 +2,15 @@ package grupo2.docubot.controller;
 
 import grupo2.docubot.dto.request.ChatRequestDto;
 import grupo2.docubot.dto.response.ChatResponseDto;
-import grupo2.docubot.models.Chat;
 import grupo2.docubot.models.User;
+import grupo2.docubot.security.MainUser;
 import grupo2.docubot.services.ChatService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import retrofit2.http.PATCH;
 
 import java.util.List;
 
@@ -44,6 +44,11 @@ public class ChatController {
     @GetMapping("/{id}")
     public ResponseEntity<ChatResponseDto> getChatById(@PathVariable Long id) {
         return ResponseEntity.ok(chatService.getById(id));
+    }
+
+    @GetMapping
+    public ResponseEntity<ChatResponseDto> getChatByDepartment(@AuthenticationPrincipal MainUser user) {
+        return ResponseEntity.ok(chatService.getByDepartment(user));
     }
 
 
