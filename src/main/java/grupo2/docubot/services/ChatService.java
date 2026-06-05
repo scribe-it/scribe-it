@@ -7,8 +7,10 @@ import grupo2.docubot.mappers.ChatMapper;
 import grupo2.docubot.models.Chat;
 import grupo2.docubot.models.User;
 import grupo2.docubot.repository.ChatRepository;
+import grupo2.docubot.security.MainUser;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -70,6 +72,13 @@ public class ChatService {
         return chatRepository.findAllByUserId(userId).stream()
                 .map(chatMapper::toDto)
                 .toList();
+    }
+
+    public ChatResponseDto getByDepartment(@AuthenticationPrincipal MainUser user) {
+
+        Chat chat = chatRepository.findByDepartment(user.getDepartment());
+
+        return chatMapper.toDto(chat);
     }
 
     @Transactional
