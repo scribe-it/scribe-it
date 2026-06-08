@@ -11,7 +11,7 @@ export type Chat = {
     description: string
 }
 
-export const SecondarySidebar = ({ setChatId }: { setChatId: React.Dispatch<React.SetStateAction<number>> }) => {
+export const SecondarySidebar = ({ chatId, setChatId }: { chatId: number, setChatId: React.Dispatch<React.SetStateAction<number>> }) => {
     const [chats, setChats] = useState<Chat[]>([])
     const [showInput, setShowInput] = useState(false)
     const [chatName, setChatName] = useState("")
@@ -55,7 +55,6 @@ export const SecondarySidebar = ({ setChatId }: { setChatId: React.Dispatch<Reac
         setShowInput(false)
         setChatName("")
     }
-
     return (
         <aside className="px-20 py-10">
             <header className="mb-2">Departamentos</header>
@@ -87,7 +86,7 @@ export const SecondarySidebar = ({ setChatId }: { setChatId: React.Dispatch<Reac
                     )}
                 </Card>
                 {chats.filter(c => c.department !== "Docubot").map((chat) => (
-                    <Card key={chat.id} className={cn("p-2")} onClick={() => setChatId(chat.id)}>
+                    <Card key={chat.id} className={cn("p-2", chat.id === chatId ? "bg-blue-400 text-white" : "")} onClick={() => setChatId(chat.id)}>
                         {chat.department}
                     </Card>
                 ))}
