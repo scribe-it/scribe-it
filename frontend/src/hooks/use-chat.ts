@@ -21,7 +21,7 @@ const useChat = (chatId: number) => {
 
     const {
         data
-    } = useQuery<ChatData[]>({
+    } = useQuery<ChatData>({
         queryKey: ["chat", chatId],
         queryFn: async () => {
         const response = await fetch(`/api/v1/chat/${chatId}`, {
@@ -39,4 +39,4 @@ const useChat = (chatId: number) => {
 
     }
     
-    export default useChat
+export default useChat

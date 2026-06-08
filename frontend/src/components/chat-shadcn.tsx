@@ -10,6 +10,22 @@ import { useStompClient, useSubscription } from "react-stomp-hooks";
 import useChat from "@/hooks/use-chat";
 import { useQueryClient } from "@tanstack/react-query";
 
+export interface User {
+  id: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  department: string;
+}
+
+export interface ChatData {
+  id:number
+  department: string
+  description: string
+  messages: Message[]
+  users: User[]
+}
+
 export interface Message {
   id: number;
   content: string;
@@ -18,6 +34,11 @@ export interface Message {
   timestamp: string;
 }
 
+
+interface ChatSummary {
+  id: number;
+  department: string;
+}
 export function ChatWindow({ chatId }: { chatId: number }) {
   
   const [inputValue, setInputValue] = useState("");
@@ -25,9 +46,12 @@ export function ChatWindow({ chatId }: { chatId: number }) {
   const [showParticipants, setShowParticipants] = useState(false)
 
   const queryClient = useQueryClient();
-  const onMessage = useCallback((message) => {
+  const onMessage = useCallback((message: { body: string }) => {
     const newMsg = JSON.parse(message.body);
-    queryClient.setQueryData(["messages", chatId], (prev: Message[] | undefined) => [...(prev || []), newMsg]);
+    queryClient.setQueryData(["chat", chatId], (prev: ChatData | undefined) => {
+      if (!prev) return undefined;
+      return { ...prev, messages: [...prev.messages, newMsg] };
+    });
   }, [chatId, queryClient]);
   
   useSubscription("/topic/chat/" + chatId,  onMessage);
@@ -47,6 +71,34 @@ export function ChatWindow({ chatId }: { chatId: number }) {
       //Handle error
     }
   };
+
+  const handleForwardMessage = async (msg: Message) => {
+    if (!stompClient) return;
+    const response = await fetch("/api/v1/chat", {
+      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+    });
+    if (!response.ok) return;
+
+    const chats: ChatSummary[] = await response.json();
+    const docubotChat = chats.find((chat) => chat.department.toLowerCase() === "docubot");
+    if (!docubotChat) return;
+
+    stompClient.publish({
+      destination: "/app/chat-send",
+      body: JSON.stringify({
+        chatId: docubotChat.id,
+        senderId: 1,
+        content: "FW: " + msg.content,
+        type: "TEXT",
+      }),
+    });
+
+    queryClient.setQueryData(["chat", docubotChat.id], (prev: ChatData | undefined) => {
+      if (!prev) return undefined;
+      return { ...prev, messages: [...prev.messages, { ...msg, content: "FW: " + msg.content }] };
+    });
+  };
+
   if(data?.messages) {
     return (
       <Card className="w-full max-w-[50vw] min-w-[50vw] mx-auto h-[600px] flex flex-col">
@@ -93,6 +145,7 @@ export function ChatWindow({ chatId }: { chatId: number }) {
                 const isMe = true; // Solo para pruebas, asume que todos los mensajes son del usuario
                 return (
                   <div key={msg.id} className={`flex ${isMe ? "justify-end" : "justify-start"}`}>
+                    <ChevronDown className={`size-6 text-muted-foreground ${isMe ? "rotate-270 translate-y-3" : ""}`} onClick={() => handleForwardMessage(msg)}/>
                     <div className={`max-w-[70%] rounded-lg px-3 py-2 text-sm ${
                       isMe ? "bg-primary text-primary-foreground rounded-tr-none" : "bg-muted rounded-tl-none"
                     }`}>

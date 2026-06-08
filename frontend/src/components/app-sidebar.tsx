@@ -20,7 +20,7 @@ const items = [
   {name:"publicaciones", url: "publicaciones", icon: FileText},
 ]
 
-  export function AppSidebar({ setView }: { setView?: React.Dispatch<React.SetStateAction<"chat" | "register">> }) {
+  export function AppSidebar() {
     return (
       <Sidebar>
           <SidebarHeader>
@@ -60,14 +60,12 @@ const items = [
                 </SidebarMenuButton>
               </SidebarMenuItem>
             ))}
-            {setView && (
               <SidebarMenuItem>
-                <SidebarMenuButton onClick={() => setView("register")}>
+                <SidebarMenuButton>
                   <UserPlus />
                   <span>Registrar usuario</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
-            )}
           </SidebarMenu>
         </SidebarGroup>
           <SidebarGroup />
