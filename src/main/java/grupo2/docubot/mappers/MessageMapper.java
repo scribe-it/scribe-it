@@ -14,6 +14,7 @@ public interface MessageMapper {
     Message toEntity(MessageRequestDto messageRequestDto);
 
     @Mapping(target="user_id", source="user.id")
+    @Mapping(target="chat_id", source="chat.id")
     MessageResponseDto toDto(Message message);
 
 

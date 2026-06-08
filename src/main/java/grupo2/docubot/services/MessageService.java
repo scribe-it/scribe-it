@@ -25,7 +25,7 @@ public class MessageService {
 
         Chat chat = chatService.getById(messageRequestDto.getChatId());
 
-        User sender = userService.getById(messageRequestDto.getSenderId());
+        User sender = userService.findById(messageRequestDto.getSenderId());
 
         Message newMessage = messageMapper.toEntity(messageRequestDto);
 
@@ -43,9 +43,11 @@ public class MessageService {
         Message originalMessage = messageRepository.findById(originalMessageId)
                 .orElseThrow(() -> new RuntimeException("Original message not found with id: " + originalMessageId));
 
-        Chat toChat = chatService.getById(toChatId);
+        Chat toChat = chatService.getChatById(toChatId)
+                .orElseThrow(() -> new RuntimeException("Chat not found with id: " + toChatId));
 
-        User sender = userService.getById(senderId);
+        User sender = userService.getUserById(senderId)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + senderId));
 
         Message forwardedMessage = new Message();
         forwardedMessage.setContent(originalMessage.getContent());

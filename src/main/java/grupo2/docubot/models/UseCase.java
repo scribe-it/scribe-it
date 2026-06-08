@@ -1,23 +1,19 @@
 package grupo2.docubot.models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.List;
 
 @Entity
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
+@Getter @Setter @AllArgsConstructor @NoArgsConstructor
 public class UseCase {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
     private String actor;
 
     private String precondition;
@@ -25,8 +21,13 @@ public class UseCase {
     @Column(name = "trigger_event")
     private String trigger;
 
-    @Column(nullable = false)
-    private List<String> main_flow;
+    @Column(columnDefinition = "TEXT")
+    private String main_flow;
 
-    private String poscondition;
+    @Column(name = "postcondition")
+    private String postcondition;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "history_id")
+    private UseCaseHistory history;
 }

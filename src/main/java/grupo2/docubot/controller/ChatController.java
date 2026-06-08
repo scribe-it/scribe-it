@@ -37,7 +37,7 @@ public class ChatController {
 
     @PatchMapping("/{chatId}/add/{userId}")
     @PreAuthorize("hasRole('ANALISTA')")
-    public ResponseEntity<List<User>> addUser(@PathVariable Long chatId,@PathVariable Long userId){
+    public ResponseEntity<List<String>> addUser(@PathVariable Long chatId,@PathVariable Long userId){
         return ResponseEntity.ok(chatService.addUser(chatId,userId));
     }
 

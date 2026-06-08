@@ -5,6 +5,7 @@ import grupo2.docubot.dto.response.MessageResponseDto;
 import grupo2.docubot.models.Chat;
 import grupo2.docubot.models.Message;
 import grupo2.docubot.services.MessageService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,11 @@ import java.util.List;
 public class MessageController {
 
     private final MessageService messageService;
+
+    @PostMapping
+    public ResponseEntity<MessageResponseDto> sendMessage(@Valid @RequestBody MessageRequestDto messageRequestDto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(messageService.createMessage(messageRequestDto));
+    }
 
     @GetMapping("/chat/{id}")
     public ResponseEntity<List<MessageResponseDto>> getAllByChatId(@PathVariable Long id){

@@ -1,8 +1,6 @@
 package grupo2.docubot.controller;
 
-import grupo2.docubot.dto.internal.AnalysisResponse;
-import grupo2.docubot.services.MessageProcesor;
-import org.springframework.web.bind.annotation.GetMapping;
+import grupo2.docubot.services.GroqService;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -10,10 +8,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/test")
 public class TestController {
 
-    private final MessageProcesor messageProcesor;
+    private final GroqService groqService;
 
-    public TestController(MessageProcesor messageProcesor) {
-        this.messageProcesor = messageProcesor;
+    public TestController(GroqService groqService) {
+        this.groqService = groqService;
     }
 
 //    @GetMapping("/correr-simulacion")

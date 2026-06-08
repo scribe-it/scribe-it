@@ -10,6 +10,7 @@ import grupo2.docubot.repository.ChatRepository;
 import grupo2.docubot.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,11 +21,15 @@ public class ChatService {
 
     private final ChatRepository chatRepository;
     private final ChatMapper chatMapper;
-    private final UserRepository userRepository;
+    private final UserService userService;
 
     public ChatResponseDto createChat(ChatRequestDto chatRequestDto) {
 
         Chat newChat = chatMapper.toEntity(chatRequestDto);
+
+        List<User> users = userService.getByDepartment(chatRequestDto.getDepartment());
+
+        newChat.setUsers(users);
 
         Chat savedChat = chatRepository.save(newChat);
 
@@ -41,11 +46,32 @@ public class ChatService {
                 .toList();
     }
 
-    public Chat getById(Long id) {
+    public Chat getEntityById(Long id) {
 
         return chatRepository.findById(id)
                 .orElseThrow(()-> new RecourseNotFound("El Chat con id "+ id +" no fue encontrado"));
 
+    }
+
+    public ChatResponseDto getById(Long id) {
+
+        Chat chat = chatRepository.findById(id)
+                .orElseThrow(()-> new RecourseNotFound("El Chat con id "+ id +" no fue encontrado"));
+
+        //Puede haber usuarios que se dieron de alta después de creado el chat. Por eso lo hacemos manual
+        List<User> users = userService.getByDepartment(chat.getDepartment());
+
+        chat.setUsers(users);
+
+        return chatMapper.toDto(chat);
+
+    }
+
+    public List<ChatResponseDto> getAllChatsByUserId(Long userId) {
+
+        return chatRepository.findAllByUserId(userId).stream()
+                .map(chatMapper::toDto)
+                .toList();
     }
 
     @Transactional
@@ -54,8 +80,13 @@ public class ChatService {
         Chat chat = chatRepository.findById(chatId)
                 .orElseThrow(()-> new RecourseNotFound("El Chat con id "+ chatId +" no fue encontrado"));
         //Validando la existencia del usuario en el sistema
-        User user = userRepository.findById(userId)
-                .orElseThrow(()-> new RecourseNotFound("El Usuario con id "+ userId +" no fue encontrado"));
+        User user = userService.findById(userId);
+
+        for(User chatUser : chat.getUsers()){
+            if(chatUser.equals(user)){
+                throw new RuntimeException("El usuario ya fue agregado al chat");
+            }
+        }
 
         //Añadiendo el usuario
         chat.getUsers().add(user);

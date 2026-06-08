@@ -39,9 +39,14 @@ public class Chat {
     )
     private List<User> users = new ArrayList<>();
 
+    private Boolean isDedicated;
+
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
+        if (isDedicated == null) {
+            isDedicated=false;
+        }
     }
 }
 
