@@ -8,10 +8,10 @@ import grupo2.docubot.models.Chat;
 import grupo2.docubot.models.User;
 import grupo2.docubot.repository.ChatRepository;
 import grupo2.docubot.security.MainUser;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -80,6 +80,13 @@ public class ChatService {
 
         return chatMapper.toDto(chat);
     }
+    @Transactional(readOnly = true)
+    public ChatResponseDto getDocubot() {
+
+        Chat chat = chatRepository.findByDepartment("docubot");
+
+        return chatMapper.toDto(chat);
+    }
 
     @Transactional
     public List<User> addUser(Long chatId,Long userId){
@@ -87,7 +94,7 @@ public class ChatService {
         Chat chat = chatRepository.findById(chatId)
                 .orElseThrow(()-> new RecourseNotFound("El Chat con id "+ chatId +" no fue encontrado"));
         //Validando la existencia del usuario en el sistema
-        User user = userService.getById(userId);
+        User user = userService.findById(userId);
 
         //Añadiendo el usuario
         chat.getUsers().add(user);
