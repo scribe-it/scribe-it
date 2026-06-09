@@ -23,5 +23,6 @@ export const router = createBrowserRouter([
       element: <AppLayout />,
       children: AppRoutes,
       // HydrateFallback: <AppFallback />
-    }
+    },
+    
 ])

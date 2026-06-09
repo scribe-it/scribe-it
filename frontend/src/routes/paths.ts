@@ -1,7 +1,7 @@
 export const Routes = {
+  home: '/',
   logIn: '/log-in',
   signUp: '/sign-up',
-  home: '/home',
   editor: '/editor',
   chats: '/chats',
   chatDetail: (chatId: number) => `/chat/${chatId}`,

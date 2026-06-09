@@ -1,17 +1,21 @@
 import { useAuth } from "@/context/use-auth";
+import { Routes } from "@/routes/paths";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const { login } = useAuth()
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     try {
       await login(email, password);
+      navigate(Routes.home)
     //   onLogin();
     } catch {
       setError("Credenciales inválidas");
