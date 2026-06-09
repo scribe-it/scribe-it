@@ -1,6 +1,7 @@
 package grupo2.docubot.services;
 
 import grupo2.docubot.dto.request.MessageRequestDto;
+import grupo2.docubot.dto.response.ChatResponseDto;
 import grupo2.docubot.dto.response.MessageResponseDto;
 import grupo2.docubot.mappers.MessageMapper;
 import grupo2.docubot.models.Chat;
@@ -9,6 +10,8 @@ import grupo2.docubot.models.User;
 import grupo2.docubot.repository.MessageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -23,7 +26,7 @@ public class MessageService {
 
         Chat chat = chatService.getEntityById(messageRequestDto.getChatId());
 
-        User sender = userService.getById(messageRequestDto.getSenderId());
+        User sender = userService.findById(messageRequestDto.getSenderId());
 
         Message newMessage = messageMapper.toEntity(messageRequestDto);
 
@@ -43,7 +46,7 @@ public class MessageService {
 
         Chat toChat = chatService.getEntityById(toChatId);
 
-        User sender = userService.getById(senderId);
+        User sender = userService.findById(senderId);
 
         Message forwardedMessage = new Message();
         forwardedMessage.setContent(originalMessage.getContent());
@@ -65,6 +68,23 @@ public class MessageService {
         return messageRepository.findAllByChatId(chatId).stream()
                 .map(messageMapper::toDto)
                 .toList();
+    }
+
+    public List<MessageResponseDto> getAllDocubot() {
+        ChatResponseDto docubot = chatService.getDocubot();
+
+        return messageRepository.findAllByChatId(docubot.getId())
+                .stream()
+                .filter(m -> !m.isProcessed())
+                .map(messageMapper::toDto)
+                .toList();
+    }
+
+    public List<MessageResponseDto> markAsProcessed(List<Long> messagesIds) {
+        List<Message> entities = messageRepository.findAllById(messagesIds);
+        entities.forEach(m -> m.setProcessed(true));
+        List<Message> saved = messageRepository.saveAll(entities);
+        return saved.stream().map(messageMapper::toDto).toList();
     }
 
 }
