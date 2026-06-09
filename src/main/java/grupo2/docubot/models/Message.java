@@ -36,6 +36,8 @@ public class Message {
 
     private boolean isRead;
 
+    private boolean isProcessed;
+
     @PrePersist
     protected void onCreate() {
         this.timestamp = LocalDateTime.now();

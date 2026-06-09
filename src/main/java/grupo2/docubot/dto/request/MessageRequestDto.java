@@ -13,6 +13,8 @@ import lombok.Setter;
 public class MessageRequestDto {
 
 
+    private Long id;
+
     @NotNull
     private Long chatId;
     
@@ -24,5 +26,7 @@ public class MessageRequestDto {
 
     @NotNull
     private Long senderId;
+
+    private Boolean processed;
 
 }
