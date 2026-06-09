@@ -46,7 +46,7 @@ public class ChatController {
         return ResponseEntity.ok(chatService.getById(id));
     }
 
-    @GetMapping
+    @GetMapping("/by-department")
     public ResponseEntity<ChatResponseDto> getChatByDepartment(@AuthenticationPrincipal MainUser user) {
         return ResponseEntity.ok(chatService.getByDepartment(user));
     }
