@@ -3,7 +3,7 @@ package grupo2.docubot.services;
 import grupo2.docubot.dto.response.UserResponseDto;
 import grupo2.docubot.mappers.UserMapper;
 import grupo2.docubot.models.User;
-import grupo2.docubot.models.enums.Role;
+import grupo2.docubot.models.Role;
 import grupo2.docubot.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -46,7 +46,7 @@ public class UserService {
     @Transactional
     public UserResponseDto updateUserRole(Long id, Role newRole) {
         User user = findById(id);
-        user.setRole(newRole);
+        user.getRole().add(newRole);
 
         User updatedUser = userRepository.save(user);
         return userMapper.toDto(updatedUser);

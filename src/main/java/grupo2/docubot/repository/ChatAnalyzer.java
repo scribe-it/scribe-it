@@ -36,7 +36,7 @@ public interface ChatAnalyzer {
         You must strictly respond with a JSON object containing:        
         1. "precondition": Prerequisites required to start the workflow.
         2. "trigger": The specific action or event that triggers the process.
-        3. "main_flow": An array of strings. Each string must start with its step number (e.g., "1. Action...").
+        3. "main_flow": A single string containing the numbered steps separated by newlines (e.g., "1. User clicks button\\n2. System saves data").
         Clearly separate user actions from system responses.
         4. "postcondition": The final state of the system after the workflow is successfully completed.
         

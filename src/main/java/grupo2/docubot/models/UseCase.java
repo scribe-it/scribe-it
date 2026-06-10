@@ -25,8 +25,12 @@ public class UseCase {
     @Column(name = "trigger_event")
     private String trigger;
 
-    @Column(nullable = false)
-    private List<String> main_flow;
+    private String main_flow;
 
-    private String poscondition;
+    private String postcondition;
+
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "history_id")
+    private UseCaseHistory history;
 }

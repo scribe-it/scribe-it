@@ -1,7 +1,9 @@
 package grupo2.docubot.dto.response;
 
-import grupo2.docubot.models.enums.Role;
+import grupo2.docubot.models.Role;
 import lombok.*;
+
+import java.util.Set;
 
 @Getter
 @Setter
@@ -11,7 +13,7 @@ import lombok.*;
 public class UserResponseDto {
     private String firstName;
     private String lastName;
-    private Role role;
+    private Set<Role> role;
     private String email;
     private String department;
 }

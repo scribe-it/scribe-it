@@ -18,7 +18,7 @@ public class Message {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @Column(nullable = false)
+    @Column(columnDefinition = "TEXT", nullable = false) // Definimos como TEXT asi puede sobrepasar los 255 caracteres
     private String content;
 
     @Enumerated(EnumType.STRING)
