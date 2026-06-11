@@ -76,12 +76,12 @@ export default function Chat() {
   }, [messages]);
 
   return (
-    <div className="flex flex-col h-screen max-w-md mx-auto border rounded-xl overflow-hidden">
-      <div className="bg-black text-white p-3 font-bold">
+    <div className="flex flex-col h-screen max-w-md mx-auto border border-border rounded-xl overflow-hidden">
+      <div className="bg-teal-800 text-white p-3 font-bold">
         Chat
       </div>
 
-      <div className="flex-1 p-3 overflow-y-auto space-y-2 bg-gray-100">
+      <div className="flex-1 p-3 overflow-y-auto space-y-2 bg-muted/50">
         {messages.map((msg) => (
           <div
             key={msg.id}
@@ -92,8 +92,8 @@ export default function Chat() {
             <div
               className={`px-3 py-2 rounded-lg max-w-[75%] text-sm ${
                 msg.sender === "user"
-                  ? "bg-blue-500 text-white"
-                  : "bg-white border"
+                  ? "bg-teal-400 text-white"
+                  : "bg-card border border-border"
               }`}
             >
               {msg.text}
@@ -103,9 +103,9 @@ export default function Chat() {
         <div ref={bottomRef} />
       </div>
 
-      <div className="p-3 border-t flex gap-2 bg-white">
+      <div className="p-3 border-t border-border flex gap-2 bg-card">
         <input
-          className="flex-1 border rounded-lg px-3 py-2 text-sm outline-none"
+          className="flex-1 border border-input rounded-lg px-3 py-2 text-sm outline-none bg-transparent"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && sendMessage()}
@@ -113,7 +113,7 @@ export default function Chat() {
         />
         <button
           onClick={sendMessage}
-          className="bg-blue-500 text-white px-4 rounded-lg text-sm"
+          className="bg-teal-400 text-white px-4 rounded-lg text-sm hover:bg-teal-600"
         >
           Enviar
         </button>

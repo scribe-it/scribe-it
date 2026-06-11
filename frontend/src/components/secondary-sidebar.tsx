@@ -56,10 +56,11 @@ export const SecondarySidebar = ({ chatId, setChatId }: { chatId: number, setCha
         setChatName("")
     }
     return (
-        <aside className="px-20 py-10">
-            <header className="mb-2">Departamentos</header>
+        <aside className="w-56 m-10">
             <div className="flex flex-col gap-4">
-                <Card className="p-2 flex items-center gap-2">
+                <div className="flex items-center justify-between">
+                <header className="mb-2 font-medium text-foreground">Departamentos</header>
+                <Card className={cn("p-2 flex items-center gap-2 ring-0 justify-center size-10", showInput ? "bg-transparent" : "bg-teal-400 text-white")} onClick={() => !showInput && setShowInput(true)}>
                     {showInput ? (
                         <>
                             <Input
@@ -72,29 +73,36 @@ export const SecondarySidebar = ({ chatId, setChatId }: { chatId: number, setCha
                                 disabled={loading}
                             />
                             <Button size="icon" variant="ghost" onClick={handleCreate} disabled={loading}>
-                                <Check className="h-4 w-4 text-green-600" />
+                                <Check className="h-4 w-4 text-teal-600" />
                             </Button>
                             <Button size="icon" variant="ghost" onClick={handleCancel} disabled={loading}>
                                 <X className="h-4 w-4 text-red-600" />
                             </Button>
                         </>
                     ) : (
-                        <Button variant="ghost" className="w-full justify-start gap-2" onClick={() => setShowInput(true)}>
+                        <Button variant="ghost" className=" gap-2" onClick={() => setShowInput(true)}>
                             <Plus className="h-4 w-4" />
-                            Nuevo departamento
                         </Button>
                     )}
                 </Card>
+                </div>
                 {chats.filter(c => c.department !== "Docubot").map((chat) => (
-                    <Card key={chat.id} className={cn("p-2", chat.id === chatId ? "bg-blue-400 text-white" : "")} onClick={() => setChatId(chat.id)}>
-                        {chat.department}
+                    <Card key={chat.id} className={cn("w-56 p-2 flex items-center justify-between cursor-pointer ring-0 bg-transparent", chat.id === chatId ? "bg-teal-400/15 border-teal-700 text-teal-300 ring-1 border-1 rounded-lg" : "")} onClick={() => setChatId(chat.id)}>
+                        <div className="flex justify-between w-full">
+                            <span>{chat.department.split(" ").slice(0, chat.department.split(" ").length - 2).join(" ")}</span>
+                            <span>{chat.department.split(" ").slice(chat.department.split(" ").length - 1).join(" ")}</span>
+                            {/* <span className={cn("text-xs font-bold opacity-60", chat.id === chatId ? "text-white" : "text-muted-foreground")}>{abbr(chat.department)}</span> */}
+                        </div>  
                     </Card>
                 ))}
-                {chats.find(c => c.department === "Docubot") && (
-                        <Card key={0} className="p-2 bg-blue-400 text-white" onClick={() => setChatId(chats.find(c => c.department === "Docubot")!.id)}>
-                            Docubot
+                {chats.find(c => c.department === "Docubot") && (() => {
+                    const docubot = chats.find(c => c.department === "Docubot")!
+                    return (
+                        <Card key={0} className={cn("p-2 flex items-center justify-between cursor-pointer ring-0", docubot.id === chatId ? "bg-teal-400 text-white" : "")} onClick={() => setChatId(docubot.id)}>
+                            <span>{docubot.department.split(" ")[0]}</span>
                         </Card>
-                )}
+                    )
+                })()}
             </div>
         </aside>
     )
