@@ -1,6 +1,8 @@
-import { Chat } from "@/components/secondary-sidebar"
+import { Chat } from "@/components"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 
 type RegisterUserForm = {
     firstName: string
@@ -81,15 +83,14 @@ export default function RegisterUser() {
     }
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-gray-50">
-            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 w-96 p-8 bg-white rounded-xl shadow" noValidate>
+        <div className="flex items-center justify-center min-h-screen bg-muted/30">
+            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 w-96 p-8 bg-card rounded-xl shadow-panel" noValidate>
                 <h1 className="text-2xl font-bold mb-2">Registrar Usuario</h1>
 
-                {message && <p className="text-green-600 text-sm bg-green-50 p-2 rounded">{message}</p>}
-                {error && <p className="text-red-600 text-sm bg-red-50 p-2 rounded">{error}</p>}
+                {message && <p className="text-teal-600 text-sm bg-teal-50 p-2 rounded">{message}</p>}
+                {error && <p className="text-destructive text-sm bg-destructive/10 p-2 rounded">{error}</p>}
 
-                <input
-                    className="border rounded px-3 py-2"
+                <Input
                     placeholder="Nombre"
                     {...register("firstName", {
                         required: "El nombre es obligatorio",
@@ -98,8 +99,7 @@ export default function RegisterUser() {
                 />
                 {errors.firstName && <p className="text-red-600 text-xs">{errors.firstName.message}</p>}
 
-                <input
-                    className="border rounded px-3 py-2"
+                <Input
                     placeholder="Apellido"
                     {...register("lastName", {
                         required: "El apellido es obligatorio",
@@ -108,8 +108,7 @@ export default function RegisterUser() {
                 />
                 {errors.lastName && <p className="text-red-600 text-xs">{errors.lastName.message}</p>}
 
-                <input
-                    className="border rounded px-3 py-2"
+                <Input
                     type="email"
                     placeholder="Email"
                     {...register("email", {
@@ -123,7 +122,7 @@ export default function RegisterUser() {
                 {errors.email && <p className="text-red-600 text-xs">{errors.email.message}</p>}
 
                 <select
-                    className="border rounded px-3 py-2"
+                    className="border border-border rounded-lg px-3 py-2 bg-transparent text-foreground"
                     {...register("department", {
                         required: "Selecciona un departamento",
                     })}
@@ -135,8 +134,7 @@ export default function RegisterUser() {
                 </select>
                 {errors.department && <p className="text-red-600 text-xs">{errors.department.message}</p>}
 
-                <input
-                    className="border rounded px-3 py-2"
+                <Input
                     type="password"
                     placeholder="Contraseña"
                     {...register("password", {
@@ -146,9 +144,9 @@ export default function RegisterUser() {
                 />
                 {errors.password && <p className="text-red-600 text-xs">{errors.password.message}</p>}
 
-                <button className="bg-blue-500 text-white rounded py-2 font-medium hover:bg-blue-600 disabled:opacity-70" type="submit" disabled={isSubmitting}>
+                <Button className="w-full" type="submit" disabled={isSubmitting}>
                     {isSubmitting ? "Registrando..." : "Registrar"}
-                </button>
+                </Button>
             </form>
         </div>
     )

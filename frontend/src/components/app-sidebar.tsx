@@ -10,10 +10,12 @@ import {
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
+    SidebarTrigger,
   } from "@/components/ui/sidebar"
-import { ChevronDown, Code, FileText, MessageSquare, Plus, UserPlus } from "lucide-react"
+import { ChevronDown, Code, FileText, MessageSquare, Moon, Plus, Sun, UserPlus } from "lucide-react"
+import { useTheme } from "@/hooks/use-theme"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu"
-import { Link } from "react-router"
+import { Link, useLocation } from "react-router"
   
 const items = [
   // {name: "chats", url: "chats", icon: MessageSquare},
@@ -23,24 +25,15 @@ const items = [
 ] as const
 
   export function AppSidebar() {
+    const { theme, toggle } = useTheme()
+    const { pathname } = useLocation()
+
     return (
-      <Sidebar>
-          <SidebarHeader>
+      <Sidebar collapsible="icon" className="border-r border-white/[0.07] bg-[#222220]">
+          <SidebarHeader className="relative">
             <SidebarMenu>
               <SidebarMenuItem>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <SidebarMenuButton>
-                      Select Workspace
-                      <ChevronDown className="ml-auto" />
-                    </SidebarMenuButton>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-[--radix-popper-anchor-width]">
-                    <DropdownMenuItem>
-                      <span>Acme Inc</span>
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                <SidebarTrigger className="text-white" />
               </SidebarMenuItem>
             </SidebarMenu>
           </SidebarHeader>
@@ -53,11 +46,11 @@ const items = [
           <SidebarGroupContent></SidebarGroupContent>
           <SidebarMenu>
             {items.map((project) => (
-              <SidebarMenuItem key={project.name} className="py-4">
-                <SidebarMenuButton asChild>
+              <SidebarMenuItem key={project.name}>
+                <SidebarMenuButton asChild isActive={pathname === `/${project.url}`}>
                   <Link to={project.url} >
                     <project.icon />
-                    <span>{project.name}</span>
+                    <span>{project.name.charAt(0).toUpperCase() + project.name.slice(1)}</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -72,7 +65,16 @@ const items = [
         </SidebarGroup>
           <SidebarGroup />
         </SidebarContent>
-        <SidebarFooter />
+        <SidebarFooter>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton onClick={toggle}>
+                {theme === "dark" ? <Sun className="size-4" /> : <Moon className="size-4" />}
+                <span>{theme === "dark" ? "Modo claro" : "Modo oscuro"}</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarFooter>
       </Sidebar>
     )
   }

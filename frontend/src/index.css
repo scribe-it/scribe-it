@@ -1,7 +1,6 @@
 @import "tailwindcss";
 
 @theme inline {
-  /* Base colors */
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
   --color-border: hsl(var(--border));
@@ -21,7 +20,6 @@
   --color-popover: hsl(var(--popover));
   --color-popover-foreground: hsl(var(--popover-foreground));
 
-  /* Sidebar — notar que es --color-sidebar, NO --color-sidebar-background */
   --color-sidebar: hsl(var(--sidebar-background));
   --color-sidebar-foreground: hsl(var(--sidebar-foreground));
   --color-sidebar-primary: hsl(var(--sidebar-primary));
@@ -30,68 +28,105 @@
   --color-sidebar-accent-foreground: hsl(var(--sidebar-accent-foreground));
   --color-sidebar-border: hsl(var(--sidebar-border));
   --color-sidebar-ring: hsl(var(--sidebar-ring));
+
+  --color-teal-50:  #E1F5EE;
+  --color-teal-100: #9FE1CB;
+  --color-teal-200: #5DCAA5;
+  --color-teal-400: #1D9E75; /* brand primary */
+  --color-teal-600: #0F6E56;
+  --color-teal-800: #085041;
+  --color-teal-900: #04342C;
+
+  --color-slate-50:  #F1EFE8;
+  --color-slate-200: #B4B2A9;
+  --color-slate-400: #888780;
+  --color-slate-600: #5F5E5A;
+  --color-slate-800: #444441; /* dark bg */
+  --color-slate-900: #2C2C2A; /* darkest surface */
+
+  --color-amber-50:  #FAEEDA;
+  --color-amber-100: #FAC775;
+  --color-amber-200: #EF9F27; /* accent */
+  --color-amber-400: #BA7517;
+  --color-amber-600: #854F0B;
+
+  --font-mono: "JetBrains Mono", "Fira Code", monospace;
+  --font-sans: "Inter", system-ui, sans-serif;
+  --radius-bot: 4px;
+  --radius-card: 8px;
+  --radius-xl: 12px;
+  --shadow-glow: 0 0 12px rgba(29,158,117,0.25);
+  --shadow-panel: 0 1px 3px rgba(0,0,0,0.18);
+  --animate-pulse-bot: pulse 1.5s cubic-bezier(.4,0,.6,1) infinite;
 }
 
 @layer base {
+  html {
+    font-family: var(--font-sans, system-ui, sans-serif);
+  }
+
   :root {
     --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
+    --foreground: 60 2% 17%;      /* slate-900 #2C2C2A */
     --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
+    --card-foreground: 60 2% 17%;
     --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
-    --primary: 240 5.9% 10%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
-    --destructive: 0 84.2% 60.2%;
+    --popover-foreground: 60 2% 17%;
+    --primary: 161 69% 37%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 45 15% 93%;      /* slate-50  #F1EFE8 */
+    --secondary-foreground: 45 3% 27%;  /* slate-800 #444441 */
+    --muted: 45 15% 93%;          /* slate-50  #F1EFE8 */
+    --muted-foreground: 45 3% 52%;     /* slate-400 #888780 */
+    --accent: 161 40% 88%;        /* teal claro baja sat */
+    --accent-foreground: 161 60% 20%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 240 5.9% 10%;
-
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --border: 49 7% 68%;          /* slate-200 #B4B2A9 */
+    --input: 49 7% 68%;
+    --ring: 161 69% 37%;          /* teal-400 #1D9E75 */
+    --sidebar-background: 161 20% 92%;     /* teal tenue */
+    --sidebar-foreground: 161 15% 25%;
+    --sidebar-primary: 161 69% 37%;        /* teal */
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 161 35% 82%;         /* teal baja sat */
+    --sidebar-accent-foreground: 161 45% 15%;
+    --sidebar-border: 161 15% 82%;
+    --sidebar-ring: 161 69% 37%;
   }
 
   .dark {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 240 10% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 240 5.9% 10%;
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
+    --background: 60 2% 16%;           /* #2a2a28 exterior chat */
+    --foreground: 45 15% 93%;          /* slate-50  #F1EFE8 */
+    --card: 60 4% 10%;                 /* #1a1a18 fondo chat */
+    --card-foreground: 45 15% 93%;
+    --popover: 60 4% 10%;              /* #1a1a18 */
+    --popover-foreground: 45 15% 93%;
+    --primary: 161 69% 37%;            /* teal */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 60 2% 16%;            /* #2a2a28 */
+    --secondary-foreground: 45 15% 93%;
+    --muted: 60 2% 16%;
+    --muted-foreground: 45 3% 52%;
+    --accent: 161 25% 22%;
+    --accent-foreground: 161 25% 85%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 240 4.9% 83.9%;
-
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 0 0% 98%;
-    --sidebar-primary-foreground: 240 5.9% 10%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --border: 60 2% 16%;              /* #2a2a28 */
+    --input: 60 2% 16%;               /* #2a2a28 */
+    --ring: 161 69% 37%;
+    --sidebar-background: 60 3% 13%;  /* #222220 paneles laterales */
+    --sidebar-foreground: 45 15% 93%;
+    --sidebar-primary: 161 69% 37%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 60 2% 16%;
+    --sidebar-accent-foreground: 45 15% 93%;
+    --sidebar-border: 60 2% 16%;
+    --sidebar-ring: 161 69% 37%;
   }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .5; }
 }

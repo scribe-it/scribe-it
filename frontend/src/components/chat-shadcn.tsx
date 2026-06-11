@@ -101,7 +101,7 @@ export function ChatWindow({ chatId }: { chatId: number }) {
 
   if(data?.messages) {
     return (
-      <Card className="w-full max-w-[50vw] min-w-[50vw] mx-auto h-[600px] flex flex-col">
+      <Card className="flex-1 h-[100vh] flex flex-col rounded-none">
         {/* Encabezado con estado en tiempo real */}
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3 border-b">
           <div className="flex items-center space-x-3">
