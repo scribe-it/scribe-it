@@ -1,10 +1,11 @@
 export const Routes = {
     home: '/',
     logIn: '/log-in',
-    signUp: '/sign-up',
+    signUp: '/register-user',
     editor: '/editor',
     chats: '/chats',
-    chatDetail: (chatId) => `/chat/${chatId}`,
+    publications: '/publicaciones',
+    chatDetail: (chatId:string) => `/chat/${chatId}`,
     profile: '/profile',
     settings: '/settings',
 };

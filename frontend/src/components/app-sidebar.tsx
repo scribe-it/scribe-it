@@ -12,9 +12,8 @@ import {
     SidebarMenuItem,
     SidebarTrigger,
   } from "@/components/ui/sidebar"
-import { ChevronDown, Code, FileText, MessageSquare, Moon, Plus, Sun, UserPlus } from "lucide-react"
+import { Code, FileText, MessageSquare, Moon, Plus, Sun, UserPlus } from "lucide-react"
 import { useTheme } from "@/hooks/use-theme"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu"
 import { Link, useLocation } from "react-router"
   
 const items = [
@@ -22,6 +21,7 @@ const items = [
   {name: "chats", url: "", icon: MessageSquare},
   {name:"editor", url: "editor", icon: Code},
   {name:"publicaciones", url: "publicaciones", icon: FileText},
+  {name:"registrar usuario", url: "register-user", icon: UserPlus},
 ] as const
 
   export function AppSidebar() {
@@ -55,12 +55,6 @@ const items = [
                 </SidebarMenuButton>
               </SidebarMenuItem>
             ))}
-              <SidebarMenuItem>
-                <SidebarMenuButton>
-                  <UserPlus />
-                  <span>Registrar usuario</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
           </SidebarMenu>
         </SidebarGroup>
           <SidebarGroup />
