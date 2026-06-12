@@ -59,8 +59,8 @@ export const SecondarySidebar = ({ chatId, setChatId }: { chatId: number, setCha
         <aside className="w-56 m-10">
             <div className="flex flex-col gap-4">
                 <div className="flex items-center justify-between">
-                <header className="mb-2 font-medium text-foreground">Departamentos</header>
-                <Card className={cn("p-2 flex items-center gap-2 ring-0 justify-center size-10", showInput ? "bg-transparent" : "bg-teal-400 text-white")} onClick={() => !showInput && setShowInput(true)}>
+                {!showInput && <header className="mb-2 font-medium text-foreground">Departamentos</header>}
+                <Card className={cn("p-2 flex items-center gap-2 ring-0 justify-center size-10", showInput ? "bg-transparent w-40 h-32" : "bg-teal-400 text-white")} onClick={() => !showInput && setShowInput(true)}>
                     {showInput ? (
                         <>
                             <Input
