@@ -27,7 +27,7 @@ const Editor = () => {
   });
 
   const {
-    data
+    data:use_cases
   } = useQuery({
     queryKey: ["use_cases"],
     queryFn: async () => {
@@ -37,6 +37,20 @@ const Editor = () => {
       return res.json();
     }
   })
+
+  const {
+    data:analysis_messages
+  } = useQuery({
+    queryKey: ["analysis_messages"],
+    queryFn: async () => {
+      const res = await fetch(`/api/v1/admin/use-case/${analysis.use_cases[0].id}/messages`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      });
+      return res.json();
+    },
+    enabled: !!analysis.use_cases.length
+  })
+
   if (!analysis) {
     return (
       <div className="flex items-center justify-center h-[60vh] text-muted-foreground bg-background w-full h-screen">
@@ -74,11 +88,23 @@ const Editor = () => {
           </Card>
         ))}
       </div>
+      <div>
+        <h2 className="text-xl font-semibold text-foreground mb-4">Mensajes originales</h2>
+        {
+          analysis_messages?.map((msg: string) => (
+            <Card key={msg} className="mb-2">
+              <CardContent>
+                <p className="text-sm">{msg}</p>
+              </CardContent>
+            </Card>
+          ))  
+        }
+      </div>
       <aside className="w-56 m-10">
         <div className="flex flex-col gap-4">
           <h2>Historial de casos de uso</h2>
           {
-            data?.map((uc: UseCase) => (
+            use_cases?.map((uc: UseCase) => (
               <Card key={uc.id} className="p-2" onClick={() => setAnalysis({ use_cases: [uc] })}>
                 <CardContent className="flex items-center justify-between">
                   <span className="text-sm">Caso de Uso #{uc.id}</span>
