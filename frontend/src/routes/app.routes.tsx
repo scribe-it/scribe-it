@@ -14,5 +14,19 @@ export const AppRoutes = [
       const module = await import('@/pages/editor')
       return { Component: module.default }
     }
+  },
+  {
+    path: Routes.publications,
+    async lazy() {
+      const module = await import('@/pages/publications')
+      return { Component: module.default }
+    }
+  },
+  {
+    path: Routes.signUp,
+    async lazy() {
+      const module = await import('@/pages/register-user')
+      return { Component: module.default }
+    }
   }
 ]
