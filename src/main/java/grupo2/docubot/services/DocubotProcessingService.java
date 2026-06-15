@@ -33,6 +33,8 @@ public class DocubotProcessingService {
 
         List<MessageResponseDto> unprocessedMessages = messageService.getAllDocubot();
 
+        if(unprocessedMessages.size() > 0) {
+
         String standardizedMessages = normalizer(unprocessedMessages);
 
         AnalysisResponse response = messageProcesor.getAllMessages(standardizedMessages);
@@ -65,6 +67,9 @@ public class DocubotProcessingService {
         }
 
         return response;
+        }
+
+        return null;
     };
 
     public String normalizer(List<MessageResponseDto> messages){
