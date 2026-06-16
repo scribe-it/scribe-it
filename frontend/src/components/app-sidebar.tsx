@@ -12,14 +12,16 @@ import {
     SidebarMenuItem,
     SidebarTrigger,
   } from "@/components/ui/sidebar"
-import { Code, FileText, MessageSquare, Moon, Plus, Sun, UserPlus } from "lucide-react"
+import { Code, FilePenLine, FileText, LogOut, MessageSquare, Moon, Plus, Sun, UserPlus } from "lucide-react"
 import { useTheme } from "@/hooks/use-theme"
+import { useAuth } from "@/context/use-auth"
 import { Link, useLocation } from "react-router"
   
 const items = [
   // {name: "chats", url: "chats", icon: MessageSquare},
   {name: "chats", url: "", icon: MessageSquare},
   {name:"editor", url: "editor", icon: Code},
+  {name:"borradores", url: "drafts", icon: FilePenLine},
   {name:"publicaciones", url: "publicaciones", icon: FileText},
   {name:"registrar usuario", url: "register-user", icon: UserPlus},
 ] as const
@@ -27,6 +29,7 @@ const items = [
   export function AppSidebar() {
     const { theme, toggle } = useTheme()
     const { pathname } = useLocation()
+    const { logout } = useAuth()
 
     return (
       <Sidebar collapsible="icon" className="border-r border-white/[0.07] bg-[#222220]">
@@ -65,6 +68,12 @@ const items = [
               <SidebarMenuButton onClick={toggle}>
                 {theme === "dark" ? <Sun className="size-4" /> : <Moon className="size-4" />}
                 <span>{theme === "dark" ? "Modo claro" : "Modo oscuro"}</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton onClick={logout}>
+                <LogOut className="size-4" />
+                <span>Cerrar sesión</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>
