@@ -1,12 +1,10 @@
 package grupo2.docubot.services;
 
 import grupo2.docubot.dto.request.UseCaseRequestDto;
-import grupo2.docubot.dto.response.MessageResponseDto;
 import grupo2.docubot.dto.response.UseCaseResponseDto;
 import grupo2.docubot.exceptions.response.RecourseNotFound;
 import grupo2.docubot.exceptions.response.ResourceNotFound;
 import grupo2.docubot.mappers.UseCaseMapper;
-import grupo2.docubot.models.Message;
 import grupo2.docubot.models.UseCase;
 import grupo2.docubot.models.UseCaseHistory;
 import grupo2.docubot.repository.UseCaseHistoryRepository;

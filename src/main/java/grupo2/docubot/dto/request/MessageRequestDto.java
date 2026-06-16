@@ -12,7 +12,6 @@ import lombok.Setter;
 @Setter
 public class MessageRequestDto {
 
-
     private Long id;
 
     @NotNull
