@@ -5,10 +5,19 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ChevronDown, SendHorizontal, Users } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { ChevronDown, ChevronLeft, ChevronRight, SendHorizontal, Users } from "lucide-react";
 import { useStompClient, useSubscription } from "react-stomp-hooks";
 import useChat from "@/hooks/use-chat";
 import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { useAuth } from "@/context/use-auth";
 
 export interface User {
   id: number;
@@ -43,7 +52,7 @@ export function ChatWindow({ chatId }: { chatId: number }) {
   
   const [inputValue, setInputValue] = useState("");
   const [isOnline] = useState(true); 
-  const [showParticipants, setShowParticipants] = useState(false)
+  const { userData } = useAuth()
 
   const queryClient = useQueryClient();
   const onMessage = useCallback((message: { body: string }) => {
@@ -64,7 +73,7 @@ export function ChatWindow({ chatId }: { chatId: number }) {
     if (stompClient) {
       stompClient.publish({
         destination: "/app/chat-send",
-        body: JSON.stringify({ chatId, senderId: 1, content: inputValue, type: "TEXT" }),
+        body: JSON.stringify({ chatId, senderId: userData?.id, content: inputValue, type: "TEXT" }),
       });
       setInputValue("");
     } else {
@@ -87,7 +96,7 @@ export function ChatWindow({ chatId }: { chatId: number }) {
       destination: "/app/chat-send",
       body: JSON.stringify({
         chatId: docubotChat.id,
-        senderId: 1,
+        senderId: userData?.id,
         content: "FW: " + msg.content,
         type: "TEXT",
       }),
@@ -97,44 +106,51 @@ export function ChatWindow({ chatId }: { chatId: number }) {
       if (!prev) return undefined;
       return { ...prev, messages: [...prev.messages, { ...msg, content: "FW: " + msg.content }] };
     });
+
+    toast.success("Mensaje reenviado a Docubot");
   };
 
   if(data?.messages) {
     return (
-      <Card className="flex-1 h-[100vh] flex flex-col rounded-none">
+      <Card className="flex-1 h-[100vh] flex flex-col rounded-none pt-0">
         {/* Encabezado con estado en tiempo real */}
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3 border-b">
+        <CardHeader className="flex flex-row items-center justify-between bg-[#1e1e1c] p-4 border-b border-white/[0.07]">
           <div className="flex items-center space-x-3">
             {/* <Avatar> */}
               {/* <AvatarFallback>{companionName[0]}</AvatarFallback> */}
               {/* <AvatarFallback>{"Germán"}</AvatarFallback> */}
             {/* </Avatar> */}
-            <button onClick={() => setShowParticipants(!showParticipants)} className="flex items-center gap-1 text-xs text-muted-foreground">
-              <Users className="h-3 w-3" />
-              Participantes ({data.users.length})
-              <ChevronDown className={`h-3 w-3 transition-transform ${showParticipants ? "rotate-180" : ""}`} />
-            </button>
             <div>
-              <p className="text-sm font-medium leading-none">{"Germán"}</p>
+              <p className="text-sm font-medium leading-none">{userData?.username}</p>
               <p className="text-xs text-muted-foreground mt-1">
                 {/* {isOnline ? <Badge variant="success">En línea</Badge> : <Badge variant="secondary">Desconectado</Badge>} */}
                 {isOnline ? <Badge>En línea</Badge> : <Badge variant="secondary">Desconectado</Badge>}
               </p>
             </div>
           </div>
+          <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="flex items-center text-muted-foreground gap-2">
+                  <Users className="size-4" />
+                  <p className="text-lg">Participantes ({data.users.length})</p>
+                  <ChevronDown className="size-4" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-80">
+                <DropdownMenuLabel>Participantes ({data.users.length})</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <div className="max-h-64 space-y-1 overflow-y-auto p-1">
+                  {data?.users.map((u) => (
+                    <div key={u.id} className="flex items-center gap-2 rounded-md px-2 py-1 text-sm">
+                      <Avatar className="h-6 w-6"><AvatarFallback>{u.firstName[0]}</AvatarFallback></Avatar>
+                      <span>{u.firstName} {u.lastName}</span>
+                      <span className="text-xs text-muted-foreground">({u.email})</span>
+                    </div>
+                  ))}
+                </div>
+              </DropdownMenuContent>
+            </DropdownMenu>
         </CardHeader>
-  
-        {showParticipants && (
-        <div className="border-t px-4 py-2 space-y-1">
-          {data?.users.map(u => (
-            <div key={u.id} className="flex items-center gap-2 text-sm">
-              <Avatar className="h-6 w-6"><AvatarFallback>{u.firstName[0]}</AvatarFallback></Avatar>
-              <span>{u.firstName} {u.lastName}</span>
-              <span className="text-xs text-muted-foreground">({u.email})</span>
-            </div>
-          ))}
-        </div>
-      )}
 
         {/* Cuerpo del chat con ScrollArea */}
         <CardContent className="flex-1 p-4 overflow-hidden">
@@ -142,16 +158,19 @@ export function ChatWindow({ chatId }: { chatId: number }) {
             <div className="flex flex-col space-y-4">
               {data?.messages?.map((msg) => {
                 // const isMe = msg.senderId === currentUserId;
-                const isMe = true; // Solo para pruebas, asume que todos los mensajes son del usuario
+                const isMe = msg.user_id === userData?.id;
                 return (
                   <div key={msg.id} className={`flex ${isMe ? "justify-end" : "justify-start"}`}>
-                    <ChevronDown className={`size-6 text-muted-foreground ${isMe ? "rotate-270 translate-y-3" : ""}`} onClick={() => handleForwardMessage(msg)}/>
-                    <div className={`max-w-[70%] rounded-lg px-3 py-2 text-sm ${
+                    {isMe && <ChevronRight className={`size-8 text-muted-foreground hover:bg-white transition-transform duration-100 active:scale-75 rounded-full m-4`} onClick={() => handleForwardMessage(msg)}/>}
+                      <div className={`max-w-[70%] rounded-lg px-3 py-2 text-sm ${
                       isMe ? "bg-primary text-primary-foreground rounded-tr-none" : "bg-muted rounded-tl-none"
                     }`}>
                       <p>{msg.content}</p>
                       <span className="text-[10px] block text-right mt-1 opacity-70">{msg.timestamp}</span>
                     </div>
+                    {
+                     !isMe && <ChevronLeft className={`size-8 text-muted-foreground hover:bg-white transition-transform duration-100 active:scale-75 rounded-full m-4`} onClick={() => handleForwardMessage(msg)}/>
+                    }
                   </div>
                 );
               })}
@@ -160,7 +179,7 @@ export function ChatWindow({ chatId }: { chatId: number }) {
         </CardContent>
   
         {/* Input de envío */}
-        <CardFooter className="p-3 border-t">
+        <CardFooter className="p-3 bg-[#1e1e1c] border-t border-white/[0.07]">
           <div className="flex w-full items-center space-x-2">
             <Input
               placeholder="Escribe un mensaje..."

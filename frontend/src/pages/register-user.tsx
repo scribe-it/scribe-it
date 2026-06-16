@@ -83,15 +83,16 @@ export default function RegisterUser() {
     }
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-muted/30">
+        <div className="p-6 w-full flex items-center justify-center min-h-screen bg-background">
             <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 w-96 p-8 bg-card rounded-xl shadow-panel" noValidate>
-                <h1 className="text-2xl font-bold mb-2">Registrar Usuario</h1>
+                <h1 className="text-2xl font-bold mb-2 text-white">Registrar usuario</h1>
 
                 {message && <p className="text-teal-600 text-sm bg-teal-50 p-2 rounded">{message}</p>}
                 {error && <p className="text-destructive text-sm bg-destructive/10 p-2 rounded">{error}</p>}
 
                 <Input
                     placeholder="Nombre"
+                    className="text-white"
                     {...register("firstName", {
                         required: "El nombre es obligatorio",
                         minLength: { value: 2, message: "Debe tener al menos 2 caracteres" },
@@ -101,6 +102,7 @@ export default function RegisterUser() {
 
                 <Input
                     placeholder="Apellido"
+                    className="text-white"
                     {...register("lastName", {
                         required: "El apellido es obligatorio",
                         minLength: { value: 2, message: "Debe tener al menos 2 caracteres" },
@@ -111,6 +113,7 @@ export default function RegisterUser() {
                 <Input
                     type="email"
                     placeholder="Email"
+                    className="text-white"
                     {...register("email", {
                         required: "El email es obligatorio",
                         pattern: {
@@ -122,7 +125,7 @@ export default function RegisterUser() {
                 {errors.email && <p className="text-red-600 text-xs">{errors.email.message}</p>}
 
                 <select
-                    className="border border-border rounded-lg px-3 py-2 bg-transparent text-foreground"
+                    className="border border-border rounded-lg px-3 py-2 bg-background text-foreground"
                     {...register("department", {
                         required: "Selecciona un departamento",
                     })}
@@ -137,6 +140,7 @@ export default function RegisterUser() {
                 <Input
                     type="password"
                     placeholder="Contraseña"
+                    className="text-white"
                     {...register("password", {
                         required: "La contrasena es obligatoria",
                         minLength: { value: 8, message: "Debe tener al menos 8 caracteres" },

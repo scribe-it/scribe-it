@@ -13,6 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class UseCaseResponseDto {
+    private Long id;
     private String actor;
     private String precondition;
     private String trigger;

@@ -4,6 +4,7 @@ export const Routes = {
     signUp: '/register-user',
     editor: '/editor',
     chats: '/chats',
+    drafts: '/drafts',
     publications: '/publicaciones',
     chatDetail: (chatId:string) => `/chat/${chatId}`,
     profile: '/profile',

@@ -16,6 +16,13 @@ export const AppRoutes = [
     }
   },
   {
+    path: Routes.drafts,
+    async lazy() {
+      const module = await import('@/pages/draft')
+      return { Component: module.default }
+    }
+  },
+  {
     path: Routes.publications,
     async lazy() {
       const module = await import('@/pages/publications')

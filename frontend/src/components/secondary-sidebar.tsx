@@ -56,7 +56,7 @@ export const SecondarySidebar = ({ chatId, setChatId }: { chatId: number, setCha
         setChatName("")
     }
     return (
-        <aside className="w-56 m-10">
+        <aside className="w-72 p-10 bg-[#1e1e1c] border-l border-white/[0.07]">
             <div className="flex flex-col gap-4">
                 <div className="flex items-center justify-between">
                 {!showInput && <header className="mb-2 font-medium text-foreground">Departamentos</header>}
