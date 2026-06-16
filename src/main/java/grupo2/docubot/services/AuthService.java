@@ -47,7 +47,13 @@ public class AuthService {
         //Generando token
         String token = jwtService.generateToken(userDetails);
 
-        return new AuthResponseDto(token);
+
+        return new AuthResponseDto(
+                token,
+                userDetails.getId(),
+                userDetails.getUsername(),
+                userDetails.getDepartment()
+        );
     }
 
     /* Metodo anteriormente usado para cargar el analista en el bd}*/
@@ -72,7 +78,12 @@ public class AuthService {
 
         String token = jwtService.generateToken(userDetails);
 
-        return new AuthResponseDto(token);
+        return new AuthResponseDto(
+                token,
+                userDetails.getId(),
+                userDetails.getUsername(),
+                userDetails.getDepartment()
+        );
     }
 
     // Metodo para cargar user con cualquier rol
