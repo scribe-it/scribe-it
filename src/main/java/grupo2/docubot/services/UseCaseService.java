@@ -4,6 +4,7 @@ import grupo2.docubot.dto.request.UseCaseRequestDto;
 import grupo2.docubot.dto.response.MessageResponseDto;
 import grupo2.docubot.dto.response.UseCaseResponseDto;
 import grupo2.docubot.exceptions.response.RecourseNotFound;
+import grupo2.docubot.exceptions.response.ResourceNotFound;
 import grupo2.docubot.mappers.UseCaseMapper;
 import grupo2.docubot.models.Message;
 import grupo2.docubot.models.UseCase;
@@ -32,8 +33,17 @@ public class UseCaseService {
         return useCaseMapper.toDto(useCase);
     }
 
-    public List<UseCase> findAll(){
-        return useCaseRepository.findAll();
+    public List<UseCaseResponseDto> findAll(){
+        List<UseCase> useCases = useCaseRepository.findAll();
+        return useCases
+                .stream()
+                .map(useCaseMapper::toDto)
+                .toList();
+    }
+
+    public UseCase getEntityById(Long id) {
+        return useCaseRepository.findById(id)
+                .orElseThrow(() -> new RecourseNotFound("..."));
     }
 
     public String extractMessagesByUseCase(Long historyId){
@@ -55,6 +65,8 @@ public class UseCaseService {
     }
 
     public void deleteById(Long id){
+        useCaseRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFound("Caso de uso no encontrado"));
         useCaseRepository.deleteById(id);
     }
 

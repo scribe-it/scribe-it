@@ -29,6 +29,9 @@ public class UseCase {
 
     private String postcondition;
 
+    @ManyToOne
+    @JoinColumn(name="document_id")
+    private Document document;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "history_id")
