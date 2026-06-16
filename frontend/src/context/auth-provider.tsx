@@ -4,7 +4,15 @@ import { AuthContext } from "./use-auth";
 const API_URL = "http://localhost:8080";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [token, setToken] = useState<string | null>(null);
+  const [token, setToken] = useState<string | null>(() => localStorage.getItem("token"));
+  const [userData, setUserData] = useState<{
+    id: number;
+    username: string;
+    department: string;
+  } | null>(() => {
+  const stored = localStorage.getItem("userData");
+  return stored ? JSON.parse(stored) : null;
+});
   const login = async (email: string, password: string) => {
     const res = await fetch(`${API_URL}/api/v1/auth/login`, {
       method: "POST",
@@ -15,13 +23,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const data = await res.json();
     localStorage.setItem("token", data.token);
     setToken(data.token);
+    const userData = { id: data.userId, username: data.username, department: data.department };
+    setUserData(userData);
+    localStorage.setItem("userData", JSON.stringify(userData));
   };
   const logout = () => {
     setToken(null);
+    setUserData(null);
     localStorage.removeItem("token");
-  }
+    localStorage.removeItem("userData");
+  };
   return (
-    <AuthContext.Provider value={{ token, login, logout }}>
+    <AuthContext.Provider value={{ token, login, logout, userData }}>
       {children}
     </AuthContext.Provider>
   );
