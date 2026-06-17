@@ -42,7 +42,7 @@ public class DocubotProcessingService {
 
         if(response.use_cases != null && !response.use_cases.isEmpty()) {
             UseCaseHistory history =new UseCaseHistory();
-            history.addHistory(2L,standardizedMessages);
+            history.addHistory(2L,unprocessedMessages);
             useCaseHistoryRepository.save(history);
 
             List<Long> processedMessagesIds = unprocessedMessages.stream().map(MessageResponseDto::getId).toList();
