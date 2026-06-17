@@ -24,6 +24,11 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
     }
 
+    public User findAnalyst() {
+        return userRepository.findByRole("ANALISTA")
+                .orElseThrow(() -> new RuntimeException(("User analyst not found")));
+    }
+
     @Transactional
     public UserResponseDto updateUserFirstName(Long id, String firstName) {
         User user = findById(id);

@@ -34,13 +34,16 @@ public class Message {
     @JoinColumn(name = "chat_id", nullable = false)
     private Chat chat;
 
-    private boolean isRead;
+    private Boolean isRead;
 
-    private boolean isProcessed;
+    private LocalDateTime isReadAt;
+
+    private Boolean isProcessed;
 
     @PrePersist
     protected void onCreate() {
         this.timestamp = LocalDateTime.now();
-        this.isRead = false;
+        if(this.isRead == null) this.isRead = false;
+        if(this.isProcessed == null) this.isProcessed = false;
     }
 }
