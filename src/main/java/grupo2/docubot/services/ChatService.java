@@ -22,6 +22,7 @@ public class ChatService {
     private final ChatRepository chatRepository;
     private final ChatMapper chatMapper;
     private final UserService userService;
+    private final MessageService messageService;
 
     public ChatResponseDto createChat(ChatRequestDto chatRequestDto) {
 
@@ -43,6 +44,7 @@ public class ChatService {
 
         return chats.stream()
                 .map(chatMapper::toDto)
+                .peek(c -> c.setUnreadCount(messageService.getUnreadChatMessagesCount(c.getId())))
                 .toList();
     }
 

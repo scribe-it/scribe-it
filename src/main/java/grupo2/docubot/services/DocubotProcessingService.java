@@ -23,6 +23,7 @@ public class DocubotProcessingService {
 
     private final MessageProcesor messageProcesor;
     private final UserService userService;
+    private final EmailService emailService;
     private final UseCaseService useCaseService;
     private final UseCaseHistoryRepository useCaseHistoryRepository;
     private final MessageService messageService;
@@ -61,6 +62,11 @@ public class DocubotProcessingService {
                     "/topic/analysis",
                     response
             );
+
+            String analystEmail = userService.findAnalyst().getEmail();
+
+            emailService.sendNotification(analystEmail);
+
         }else{
             System.out.println("No se encontro casos de uso");
             return null;
