@@ -1,9 +1,11 @@
 package grupo2.docubot.services;
 
 import grupo2.docubot.dto.request.DocumentRequestDto;
+import grupo2.docubot.dto.request.UseCaseRequestDto;
 import grupo2.docubot.dto.response.DocumentResponseDto;
 import grupo2.docubot.exceptions.response.ResourceNotFound;
 import grupo2.docubot.mappers.DocumentMapper;
+import grupo2.docubot.mappers.UseCaseMapper;
 import grupo2.docubot.models.Document;
 import grupo2.docubot.models.UseCase;
 import grupo2.docubot.repository.DocumentRepository;
@@ -17,6 +19,7 @@ import java.util.List;
 public class DocumentService {
 
     private final UseCaseService useCaseService;
+    private final UseCaseMapper useCaseMapper;
     private final DocumentRepository documentRepository;
     private final DocumentMapper documentMapper;
 
@@ -43,9 +46,10 @@ public class DocumentService {
         );
     }
 
-    public DocumentResponseDto addUseCase(Long documentId, UseCase useCase) {
+    public DocumentResponseDto addUseCase(Long documentId, UseCaseRequestDto useCaseRequestDto) {
         Document document = documentRepository.findById(documentId)
                 .orElseThrow(() -> new ResourceNotFound("Documento no encontrado"));
+        UseCase useCase = useCaseMapper.toEntity(useCaseRequestDto);
         document.getContent().add(useCase);
         Document documentUpdated = documentRepository.save(document);
         useCase.setDocument(document);

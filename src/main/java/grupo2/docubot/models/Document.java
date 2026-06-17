@@ -28,17 +28,17 @@ public class Document {
 
     private String title;
 
-    @OneToMany(mappedBy = "document", fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "document", fetch = FetchType.LAZY)
     private List<UseCase> content = new ArrayList<>();
 
     @Column(nullable = false)
-    private Boolean estado;
+    private Boolean published;
 
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
         this.lastModified = LocalDateTime.now();
-        this.estado = false;
+        this.published = false;
     }
 
     @PreUpdate

@@ -11,4 +11,8 @@ public interface MessageRepository extends JpaRepository<Message, Long>{
 
     List<Message> findAllByChatId(Long chatId);
 
+    long countByChatIdAndIsReadFalse(Long chatId);
+
+    List<Message> findAllByChatIdAndIsReadFalse(Long chatId);
+
 }
