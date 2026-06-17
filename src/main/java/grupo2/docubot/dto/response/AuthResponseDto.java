@@ -9,4 +9,6 @@ public class AuthResponseDto {
     private Long userId;
     private String username;
     private String department;
+    private String firstName;
+    private String lastName;
 }
