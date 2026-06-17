@@ -77,4 +77,13 @@ public class DocumentService {
                 .map(documentMapper::toDto)
                 .toList();
     }
+
+    public void deleteDraft(Long documentId) {
+        Document document = documentRepository.findById(documentId)
+                .orElseThrow(() -> new RuntimeException("Document not found"));
+        if(document.getPublished()) {
+            throw new RuntimeException("The document is published: cannot hard delete");
+        }
+        documentRepository.delete(document);
+    }
 }
