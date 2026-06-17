@@ -34,6 +34,10 @@ public class Message {
     @JoinColumn(name = "chat_id", nullable = false)
     private Chat chat;
 
+    @ManyToOne
+    @JoinColumn(name = "history_id")
+    private UseCaseHistory history;
+
     private Boolean isRead;
 
     private LocalDateTime isReadAt;
