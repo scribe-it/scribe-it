@@ -50,4 +50,11 @@ public class DocumentController {
         return ResponseEntity.ok().body(documentService.getAllPublished());
     }
 
+    @DeleteMapping("/{documentId}")
+    public ResponseEntity<Void> deleteDraft(@PathVariable Long documentId) {
+        documentService.deleteDraft(documentId);
+        return ResponseEntity.noContent().build();
+    }
+
+
 }
