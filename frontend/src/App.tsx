@@ -12,7 +12,8 @@ function App() {
     <AuthProvider>
       <QueryClientProvider client={queryClient}>
         <RouterProvider router={router} />
-        <Toaster />
+        <Toaster 
+          position='top-center'/>
       </QueryClientProvider>
     </AuthProvider>
   );

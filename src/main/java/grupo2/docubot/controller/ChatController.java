@@ -2,8 +2,8 @@ package grupo2.docubot.controller;
 
 import grupo2.docubot.dto.request.ChatRequestDto;
 import grupo2.docubot.dto.response.ChatResponseDto;
+import grupo2.docubot.models.CustomUserDetails;
 import grupo2.docubot.models.User;
-import grupo2.docubot.security.MainUser;
 import grupo2.docubot.services.ChatService;
 import grupo2.docubot.services.MessageService;
 import jakarta.validation.Valid;
@@ -25,6 +25,7 @@ public class ChatController {
     private final MessageService messageService;
 
     @PostMapping
+    @PreAuthorize("hasRole('ANALISTA')")
     public ResponseEntity<ChatResponseDto> createChat(@RequestBody @Valid ChatRequestDto chatRequestDto){
         ChatResponseDto newChat = chatService.createChat(chatRequestDto);
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -32,10 +33,9 @@ public class ChatController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ChatResponseDto>> getChats() {
-        List<ChatResponseDto> chats = chatService.getAll();
-        return ResponseEntity.ok()
-                .body(chats);
+    @PreAuthorize("hasRole('ANALISTA')")
+    public ResponseEntity<List<ChatResponseDto>> getAllChats() {
+        return ResponseEntity.ok().body(chatService.getAll());
     }
 
     @PatchMapping("/{chatId}/add/{userId}")
@@ -50,11 +50,12 @@ public class ChatController {
     }
 
     @GetMapping("/by-department")
-    public ResponseEntity<ChatResponseDto> getChatByDepartment(@AuthenticationPrincipal MainUser user) {
-        return ResponseEntity.ok(chatService.getByDepartment(user));
+    public ResponseEntity<ChatResponseDto> getChatByDepartment(@AuthenticationPrincipal CustomUserDetails user) {
+        return ResponseEntity.ok(chatService.getByDepartment(user.getDepartment()));
     }
 
     @PatchMapping("/{chatId}/read")
+    @PreAuthorize("hasRole('ANALISTA')")
     public ResponseEntity<Void> markChatAsRead(@PathVariable Long chatId) {
         return ResponseEntity.ok(messageService.markChatMessagesAsRead(chatId));
     }

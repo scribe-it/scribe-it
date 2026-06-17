@@ -15,4 +15,5 @@ public class DocumentResponseDto {
 
     private List<UseCaseResponseDto> content;
 
+    private Boolean published;
 }

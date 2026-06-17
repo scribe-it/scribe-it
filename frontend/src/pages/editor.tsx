@@ -4,9 +4,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { XIcon, Save } from "lucide-react";
+import { Save } from "lucide-react";
 import { toast } from "sonner";
 import AddToDerDialog from "@/components/add-to-der-dialog";
+import EditorSidebar from "@/components/editor-sidebar";
 
 export type UseCase = {
   id: number;
@@ -18,7 +19,7 @@ export type UseCase = {
   history?: { messages: string };
 }
 
-type Analysis = {
+export type Analysis = {
   use_cases: UseCase[];
 }
 
@@ -121,8 +122,8 @@ const Editor = () => {
   }
 
   return (
-    <div className="p-6 space-y-6 flex bg-background w-full">
-      <main className="flex-1 space-y-6">
+    <div className="flex w-full bg-background">
+      <main className="flex-1 space-y-6 p-6">
         <h1 className="text-2xl font-bold text-foreground w-full">Análisis de Casos de Uso</h1>
         {
           !analysis?.use_cases?.length && (
@@ -202,22 +203,7 @@ const Editor = () => {
           </div>
         </div>
       </main>
-      <aside className="w-56 m-10">
-        <div className="flex flex-col gap-4">
-          <h2 className="text-xl font-semibold text-white mb-4 text-center">Historial de casos de uso</h2>
-          {
-            use_cases?.map((uc: UseCase) => (
-              <Card key={uc.id} className="p-2" onClick={() => setAnalysis({ use_cases: [uc] })}>
-                <CardContent className="flex items-center justify-between relative ">
-                  <span className="text-sm">Caso de Uso #{uc.id}</span>
-                  <Badge variant="secondary">{uc.actor}</Badge>
-                  <XIcon onClick={() => handleDeleteUseCase(uc.id)} className="absolute top-0 right-0 size-5 text-white p-1 bg-red-500 rounded-full text-muted-foreground" />
-                </CardContent>
-              </Card>
-            ))
-          }
-        </div>
-      </aside>
+      <EditorSidebar useCases={use_cases} onDelete={handleDeleteUseCase} setAnalysis={setAnalysis} />
     </div>
   );
 };

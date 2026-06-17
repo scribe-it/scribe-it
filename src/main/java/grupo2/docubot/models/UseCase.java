@@ -25,13 +25,10 @@ public class UseCase {
     @Column(name = "trigger_event")
     private String trigger;
 
+    @Column(columnDefinition = "TEXT")
     private String main_flow;
 
     private String postcondition;
-
-    @ManyToOne
-    @JoinColumn(name="document_id")
-    private Document document;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "history_id")

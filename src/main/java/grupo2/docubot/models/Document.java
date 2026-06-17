@@ -28,7 +28,13 @@ public class Document {
 
     private String title;
 
-    @ManyToMany(mappedBy = "document", fetch = FetchType.LAZY)
+    @Builder.Default
+    @ManyToMany
+    @JoinTable(
+            name="document_use_case",
+            joinColumns = @JoinColumn(name="document_id"),
+            inverseJoinColumns = @JoinColumn(name="use_case_id")
+    )
     private List<UseCase> content = new ArrayList<>();
 
     @Column(nullable = false)

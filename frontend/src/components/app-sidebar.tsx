@@ -29,7 +29,9 @@ const items = [
   export function AppSidebar() {
     const { theme, toggle } = useTheme()
     const { pathname } = useLocation()
-    const { logout } = useAuth()
+    const { userData, logout } = useAuth()
+
+    const isAnalyst = !userData?.department
 
     return (
       <Sidebar collapsible="icon" className="border-r border-white/[0.07] bg-[#222220]">
@@ -48,12 +50,23 @@ const items = [
           </SidebarGroupAction>
           <SidebarGroupContent></SidebarGroupContent>
           <SidebarMenu>
-            {items.map((project) => (
-              <SidebarMenuItem key={project.name}>
-                <SidebarMenuButton asChild isActive={pathname === `/${project.url}`}>
-                  <Link to={project.url} >
-                    <project.icon />
-                    <span>{project.name.charAt(0).toUpperCase() + project.name.slice(1)}</span>
+            {isAnalyst && items.map((item) => (
+              <SidebarMenuItem key={item.name}>
+                <SidebarMenuButton asChild isActive={pathname === `/${item.url}`}>
+                  <Link to={item.url} >
+                    <item.icon />
+                    <span>{item.name.charAt(0).toUpperCase() + item.name.slice(1)}</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            ))}
+            {!isAnalyst && items.filter((item) => ["", "publicaciones"].includes(item.url)).map((item) => (
+              <SidebarMenuItem key={item.name}>
+                <SidebarMenuButton asChild isActive={pathname === `/${item.url}`}>
+                  <Link to={item.url} >
+                    <item.icon />
+                    {item.name === "publicaciones" && <span>{item.name.charAt(0).toUpperCase() + item.name.slice(1)}</span>}
+                    {item.name === "chats" && <span>Chat</span>}
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>

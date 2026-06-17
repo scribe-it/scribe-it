@@ -23,8 +23,8 @@ public class DocumentService {
     private final DocumentRepository documentRepository;
     private final DocumentMapper documentMapper;
 
-    public List<DocumentResponseDto> getAll() {
-        List<Document> documents = documentRepository.findAll();
+    public List<DocumentResponseDto> getAllDrafts() {
+        List<Document> documents = documentRepository.findAllByPublishedFalse();
 
         return documents.stream()
                 .map(documentMapper::toDto)
@@ -33,14 +33,14 @@ public class DocumentService {
 
     public DocumentResponseDto create(DocumentRequestDto documentRequestDto) {
         Document newDocument = Document.builder().title(documentRequestDto.getTitle()).build();
-        Document savedDocument = documentRepository.save(newDocument);
         if(documentRequestDto.getContent() != null ){
             documentRequestDto.getContent().forEach(uc -> {
                 UseCase useCase = useCaseService.getEntityById(uc.getId());
-                useCase.setDocument(savedDocument);
-                useCaseService.save(useCase);
+                useCase = useCaseService.save(useCase);
+                newDocument.getContent().add(useCase);
             });
         }
+        Document savedDocument = documentRepository.save(newDocument);
         return documentMapper.toDto(documentRepository.findById(savedDocument.getId())
                 .orElseThrow(() -> new ResourceNotFound("Documento no encontrado"))
         );
@@ -50,10 +50,31 @@ public class DocumentService {
         Document document = documentRepository.findById(documentId)
                 .orElseThrow(() -> new ResourceNotFound("Documento no encontrado"));
         UseCase useCase = useCaseMapper.toEntity(useCaseRequestDto);
+        useCase = useCaseService.save(useCase);
         document.getContent().add(useCase);
         Document documentUpdated = documentRepository.save(document);
-        useCase.setDocument(document);
-        useCaseService.save(useCase);
         return documentMapper.toDto(documentUpdated);
+    }
+
+    public void removeUseCase(Long documentId, Long useCaseId) {
+        Document document = documentRepository.findById(documentId)
+                .orElseThrow(() -> new ResourceNotFound("Documento no encontrado"));
+        document.getContent().removeIf(uc -> uc.getId().equals(useCaseId));
+        documentRepository.save(document);
+    }
+
+    public DocumentResponseDto publishDocument(Long documentId) {
+        Document document = documentRepository.findById(documentId)
+                .orElseThrow(() -> new ResourceNotFound("Documento no encontrado"));
+        document.setPublished(true);
+        documentRepository.save(document);
+        return documentMapper.toDto(document);
+    }
+
+    public List<DocumentResponseDto> getAllPublished() {
+        return documentRepository.findAllByPublishedTrue()
+                .stream()
+                .map(documentMapper::toDto)
+                .toList();
     }
 }

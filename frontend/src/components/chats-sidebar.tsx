@@ -5,6 +5,7 @@ import { Badge } from "./ui/badge"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { useSubscription } from "react-stomp-hooks"
 import ChatForm from "./chat-form"
+import { useAuth } from "@/context/use-auth"
 
 export type Chat = {
     id: number
@@ -16,28 +17,35 @@ export type Chat = {
 export const SecondarySidebar = ({ chatId, setChatId }: { chatId: number, setChatId: React.Dispatch<React.SetStateAction<number>> }) => {
     
     const [showForm, setShowForm] = useState(false)
-
+    const { userData } = useAuth() 
     const queryClient = useQueryClient();
+    const isAnalyst = !userData?.department;
 
     const {
         data: chats
     } = useQuery<Chat[]>({
         queryKey: ["chats"],
         queryFn: async () => {
-            const response = await fetch("/api/v1/chat", {
+            const fetchUrl = isAnalyst ? "/api/v1/chat" : `/api/v1/chat/by-department`;
+            const response = await fetch(fetchUrl, {
                 headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
             });
             if (!response.ok) { 
                 throw new Error("Network response was not ok");
             }
             const chats = await response.json()
-            const counts: Record<number, number> = {};
-            chats.forEach((chat: Chat) => {
-                counts[chat.id] = chat.unreadCount || 0;
-            });
-            queryClient.setQueryData(["unreadCounts"], counts)
+            if(isAnalyst) {
+                const counts: Record<number, number> = {};
+                chats.forEach((chat: Chat) => {
+                    counts[chat.id] = chat.unreadCount || 0;
+                });
+                queryClient.setQueryData(["unreadCounts"], counts)
+                setChatId(chats[0].id)
+            } else {
+                setChatId(chats.id)
+            }
             return chats;
-        }
+        },
     })
 
     useSubscription("/user/queue/unread", (message) => {
@@ -58,11 +66,11 @@ export const SecondarySidebar = ({ chatId, setChatId }: { chatId: number, setCha
     return (
         <aside className="w-72 p-10 bg-[#1e1e1c] border-l border-white/[0.07]">
             <div className="flex flex-col gap-4">
-                <div className="flex items-center justify-between">
-                {!showForm && <header className="mb-2 font-medium text-foreground">Departamentos</header>}
-                <ChatForm showForm={showForm} setShowForm={setShowForm} />
+                <div className="flex items-center justify-between w-full">
+                {!showForm && <header className="mb-2 font-medium text-foreground w-full text-center">{isAnalyst ? "Departamentos" : `${userData?.department}`}</header>}
+                {isAnalyst && <ChatForm showForm={showForm} setShowForm={setShowForm} />}
                 </div>
-                {chats?.filter(c => c.department !== "Docubot").map((chat) => (
+                {isAnalyst && chats?.filter(c => c.department !== "Docubot").map((chat) => (
                     <Card key={chat.id} className={cn("w-56 p-2 relative overflow-visible flex items-center justify-between cursor-pointer ring-0 bg-transparent", chat.id === chatId ? "bg-teal-400/15 border-teal-700 text-teal-300 ring-1 border-1 rounded-lg" : "")} onClick={() => setChatId(chat.id)}>
                         {unreadCounts && unreadCounts[chat.id] > 0 && <Badge className="absolute -top-2 -right-3">{unreadCounts[chat.id]}</Badge>}
                         <div className="flex justify-between w-full">
@@ -72,7 +80,7 @@ export const SecondarySidebar = ({ chatId, setChatId }: { chatId: number, setCha
                         </div>  
                     </Card>
                 ))}
-                {chats?.find(c => c.department === "Docubot") && (() => {
+                {isAnalyst && chats?.find(c => c.department === "Docubot") && (() => {
                     const docubot = chats.find(c => c.department === "Docubot")!
                     return (
                         <Card key={0} className={cn("p-2 relative flex items-center justify-between cursor-pointer ring-0", docubot.id === chatId ? "bg-teal-400 text-white" : "")} onClick={() => setChatId(docubot.id)}>
