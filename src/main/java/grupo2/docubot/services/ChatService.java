@@ -7,9 +7,7 @@ import grupo2.docubot.mappers.ChatMapper;
 import grupo2.docubot.models.Chat;
 import grupo2.docubot.models.User;
 import grupo2.docubot.repository.ChatRepository;
-import grupo2.docubot.security.MainUser;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -76,9 +74,9 @@ public class ChatService {
                 .toList();
     }
 
-    public ChatResponseDto getByDepartment(@AuthenticationPrincipal MainUser user) {
+    public ChatResponseDto getByDepartment(String department) {
 
-        Chat chat = chatRepository.findByDepartment(user.getDepartment());
+        Chat chat = chatRepository.findByDepartment(department);
 
         return chatMapper.toDto(chat);
     }

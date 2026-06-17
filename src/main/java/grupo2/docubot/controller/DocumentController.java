@@ -19,9 +19,9 @@ public class DocumentController {
 
     private final DocumentService documentService;
 
-    @GetMapping
-    public ResponseEntity<List<DocumentResponseDto>> getAll() {
-        return ResponseEntity.ok().body(documentService.getAll());
+    @GetMapping("/drafts")
+    public ResponseEntity<List<DocumentResponseDto>> getAllDrafts() {
+        return ResponseEntity.ok().body(documentService.getAllDrafts());
     }
 
     @PostMapping
@@ -34,5 +34,20 @@ public class DocumentController {
         return ResponseEntity.ok().body(documentService.addUseCase(documentId, useCase));
     }
 
+    @PatchMapping("/{documentId}/remove/{useCaseId}")
+    public ResponseEntity<Void> removeUseCase(@PathVariable Long documentId, @PathVariable Long useCaseId) {
+        documentService.removeUseCase(documentId, useCaseId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{documentId}/publish")
+    public ResponseEntity<DocumentResponseDto> publishDraft(@PathVariable Long documentId) {
+        return ResponseEntity.ok().body(documentService.publishDocument(documentId));
+    }
+
+    @GetMapping("/published")
+    public ResponseEntity<List<DocumentResponseDto>> getAllPublished() {
+        return ResponseEntity.ok().body(documentService.getAllPublished());
+    }
 
 }
