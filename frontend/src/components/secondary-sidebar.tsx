@@ -1,93 +1,70 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { cn } from "@/lib/utils"
 import { Card } from "./ui/card"
-import { Button } from "./ui/button"
-import { Input } from "./ui/input"
-import { Plus, Check, X } from "lucide-react"
+import { Badge } from "./ui/badge"
+import { useQuery, useQueryClient } from "@tanstack/react-query"
+import { useSubscription } from "react-stomp-hooks"
+import ChatForm from "./chat-form"
 
 export type Chat = {
     id: number
     department: string
     description: string
+    unreadCount?: number
 }
 
 export const SecondarySidebar = ({ chatId, setChatId }: { chatId: number, setChatId: React.Dispatch<React.SetStateAction<number>> }) => {
-    const [chats, setChats] = useState<Chat[]>([])
-    const [showInput, setShowInput] = useState(false)
-    const [chatName, setChatName] = useState("")
-    const [loading, setLoading] = useState(false)
+    
+    const [showForm, setShowForm] = useState(false)
 
-    useEffect(() => {
-        fetch("/api/v1/chat", {
-            headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        })
-            .then((res) => res.json())
-            .then((data) => {
-                setChats(data)
-                setChatId(data[0]?.id || 0)
-            })
-            .catch(console.error)
-    }, [])
+    const queryClient = useQueryClient();
 
-    const handleCreate = async () => {
-        if (!chatName.trim()) return
-        setLoading(true)
-        try {
-            await fetch("/api/v1/chat", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-                body: JSON.stringify({ department: chatName.trim(), description: "Nuevo chat" }),
-            })
-            setChatName("")
-            setShowInput(false)
-            setChats((prev) => [...prev, { id: Date.now(), department: chatName.trim(), description: "Nuevo chat" }])
-        } catch (err) {
-            console.error(err)
-        } finally {
-            setLoading(false)
+    const {
+        data: chats
+    } = useQuery<Chat[]>({
+        queryKey: ["chats"],
+        queryFn: async () => {
+            const response = await fetch("/api/v1/chat", {
+                headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+            });
+            if (!response.ok) { 
+                throw new Error("Network response was not ok");
+            }
+            const chats = await response.json()
+            const counts: Record<number, number> = {};
+            chats.forEach((chat: Chat) => {
+                counts[chat.id] = chat.unreadCount || 0;
+            });
+            queryClient.setQueryData(["unreadCounts"], counts)
+            return chats;
         }
-    }
+    })
 
-    const handleCancel = () => {
-        setShowInput(false)
-        setChatName("")
-    }
+    useSubscription("/user/queue/unread", (message) => {
+        const data = JSON.parse(message.body);
+        queryClient.setQueryData(["unreadCounts"], (prev: Record<number, number> | undefined) => {
+            if (!prev) return { [data.chatId]: data.count };
+            return { ...prev, [data.chatId]: data.count };
+        });
+    })
+
+    const { data: unreadCounts = {} } = useQuery({
+        queryKey: ["unreadCounts"],
+        queryFn: () => ({} as Record<number, number>),
+        staleTime: Infinity,
+        retry: false,
+    })
+
     return (
         <aside className="w-72 p-10 bg-[#1e1e1c] border-l border-white/[0.07]">
             <div className="flex flex-col gap-4">
                 <div className="flex items-center justify-between">
-                {!showInput && <header className="mb-2 font-medium text-foreground">Departamentos</header>}
-                <Card className={cn("p-2 flex items-center gap-2 ring-0 justify-center size-10", showInput ? "bg-transparent w-40 h-32" : "bg-teal-400 text-white")} onClick={() => !showInput && setShowInput(true)}>
-                    {showInput ? (
-                        <>
-                            <Input
-                                value={chatName}
-                                onChange={(e) => setChatName(e.target.value)}
-                                placeholder="Nombre del departamento"
-                                onKeyDown={(e) => e.key === "Enter" && handleCreate()}
-                                className="h-8 text-sm"
-                                autoFocus
-                                disabled={loading}
-                            />
-                            <Button size="icon" variant="ghost" onClick={handleCreate} disabled={loading}>
-                                <Check className="h-4 w-4 text-teal-600" />
-                            </Button>
-                            <Button size="icon" variant="ghost" onClick={handleCancel} disabled={loading}>
-                                <X className="h-4 w-4 text-red-600" />
-                            </Button>
-                        </>
-                    ) : (
-                        <Button variant="ghost" className=" gap-2" onClick={() => setShowInput(true)}>
-                            <Plus className="h-4 w-4" />
-                        </Button>
-                    )}
-                </Card>
+                {!showForm && <header className="mb-2 font-medium text-foreground">Departamentos</header>}
+                <ChatForm showForm={showForm} setShowForm={setShowForm} />
                 </div>
-                {chats.filter(c => c.department !== "Docubot").map((chat) => (
-                    <Card key={chat.id} className={cn("w-56 p-2 flex items-center justify-between cursor-pointer ring-0 bg-transparent", chat.id === chatId ? "bg-teal-400/15 border-teal-700 text-teal-300 ring-1 border-1 rounded-lg" : "")} onClick={() => setChatId(chat.id)}>
+                {chats?.filter(c => c.department !== "Docubot").map((chat) => (
+                    <Card key={chat.id} className={cn("w-56 p-2 relative overflow-visible flex items-center justify-between cursor-pointer ring-0 bg-transparent", chat.id === chatId ? "bg-teal-400/15 border-teal-700 text-teal-300 ring-1 border-1 rounded-lg" : "")} onClick={() => setChatId(chat.id)}>
+                        {unreadCounts && unreadCounts[chat.id] > 0 && <Badge className="absolute -top-2 -right-3">{unreadCounts[chat.id]}</Badge>}
                         <div className="flex justify-between w-full">
                             <span>{chat.department.split(" ").slice(0, chat.department.split(" ").length - 2).join(" ")}</span>
                             <span>{chat.department.split(" ").slice(chat.department.split(" ").length - 1).join(" ")}</span>
@@ -95,10 +72,11 @@ export const SecondarySidebar = ({ chatId, setChatId }: { chatId: number, setCha
                         </div>  
                     </Card>
                 ))}
-                {chats.find(c => c.department === "Docubot") && (() => {
+                {chats?.find(c => c.department === "Docubot") && (() => {
                     const docubot = chats.find(c => c.department === "Docubot")!
                     return (
-                        <Card key={0} className={cn("p-2 flex items-center justify-between cursor-pointer ring-0", docubot.id === chatId ? "bg-teal-400 text-white" : "")} onClick={() => setChatId(docubot.id)}>
+                        <Card key={0} className={cn("p-2 relative flex items-center justify-between cursor-pointer ring-0", docubot.id === chatId ? "bg-teal-400 text-white" : "")} onClick={() => setChatId(docubot.id)}>
+                            {unreadCounts && unreadCounts[docubot.id] > 0 && <Badge className="absolute -top-1 -right-1">{unreadCounts[docubot.id]}</Badge>}
                             <span>{docubot.department.split(" ")[0]}</span>
                         </Card>
                     )
