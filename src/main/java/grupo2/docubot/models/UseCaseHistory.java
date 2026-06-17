@@ -24,15 +24,21 @@ public class UseCaseHistory {
     @JsonIgnore
     @OneToMany(mappedBy = "history" , cascade = CascadeType.ALL,orphanRemoval = true)
     private List<UseCase> useCases=new ArrayList<>();
+    @OneToMany(mappedBy = "history",cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Message> messages=new ArrayList<>();
 
+    
     public void addUseCase(UseCase useCase){
         this.useCases.add(useCase);
         useCase.setHistory(this);
     }
 
-    public void addHistory(Long chatId,String standardizedMessages ){
+    public void addHistory(Long chatId,List<MessageResponseDto> processedMessages ){
         this.setChatId(chatId);
-        this.setMessages(standardizedMessages);
+        for(Message msg : processedMessages){
+            msg.setHistory(this); 
+            this.messages.add(msg);
+        }
         this.setCreatedAt(LocalDateTime.now());
     }
 }
