@@ -1,2 +1,5 @@
 export * from './app-sidebar'
-export * from './secondary-sidebar'
+export * from './chats-sidebar'
+export * from './editor-sidebar'
+export * from './publish-draft-confirm-dialog'
+export * from './remove-use-case-confirm-dialog'

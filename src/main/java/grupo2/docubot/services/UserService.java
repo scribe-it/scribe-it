@@ -47,7 +47,7 @@ public class UserService {
         return userMapper.toDto(updatedUser);
     }
 
-    @PreAuthorize("hasRole('ANALIST')")
+    @PreAuthorize("hasRole('ANALISTA')")
     @Transactional
     public UserResponseDto updateUserRole(Long id, Role newRole) {
         User user = findById(id);
@@ -57,7 +57,7 @@ public class UserService {
         return userMapper.toDto(updatedUser);
     }
 
-    @PreAuthorize("hasRole('ANALIST')")
+    @PreAuthorize("hasRole('ANALISTA')")
     @Transactional
     public UserResponseDto updateUserDepartment(Long id, String newDepartment) {
         User user = findById(id);
