@@ -16,5 +16,6 @@ public class ChatResponseDto {
     private List<MessageResponseDto> messages;
 
     private List<UserResponseDto> users;
-    
+
+    private Long unreadCount;
 }

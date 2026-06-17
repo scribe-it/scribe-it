@@ -5,6 +5,8 @@ import grupo2.docubot.dto.response.ChatResponseDto;
 import grupo2.docubot.models.User;
 import grupo2.docubot.security.MainUser;
 import grupo2.docubot.services.ChatService;
+import grupo2.docubot.services.MessageService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,9 +22,10 @@ import java.util.List;
 public class ChatController {
 
     private final ChatService chatService;
+    private final MessageService messageService;
 
     @PostMapping
-    public ResponseEntity<ChatResponseDto> createChat(@RequestBody ChatRequestDto chatRequestDto){
+    public ResponseEntity<ChatResponseDto> createChat(@RequestBody @Valid ChatRequestDto chatRequestDto){
         ChatResponseDto newChat = chatService.createChat(chatRequestDto);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(newChat);
@@ -49,6 +52,11 @@ public class ChatController {
     @GetMapping("/by-department")
     public ResponseEntity<ChatResponseDto> getChatByDepartment(@AuthenticationPrincipal MainUser user) {
         return ResponseEntity.ok(chatService.getByDepartment(user));
+    }
+
+    @PatchMapping("/{chatId}/read")
+    public ResponseEntity<Void> markChatAsRead(@PathVariable Long chatId) {
+        return ResponseEntity.ok(messageService.markChatMessagesAsRead(chatId));
     }
 
 
