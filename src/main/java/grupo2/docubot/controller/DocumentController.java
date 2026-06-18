@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import retrofit2.http.Path;
 
 import java.util.List;
 
@@ -43,6 +44,11 @@ public class DocumentController {
     @PostMapping("/{documentId}/publish")
     public ResponseEntity<DocumentResponseDto> publishDraft(@PathVariable Long documentId) {
         return ResponseEntity.ok().body(documentService.publishDocument(documentId));
+    }
+
+    @PatchMapping("/{documentId}/unpublish")
+    public ResponseEntity<DocumentResponseDto> unpublishDocument(@PathVariable Long documentId){
+        return ResponseEntity.ok().body(documentService.unpublishDocument(documentId));
     }
 
     @GetMapping("/published")

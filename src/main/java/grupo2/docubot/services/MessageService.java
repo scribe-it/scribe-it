@@ -2,6 +2,7 @@ package grupo2.docubot.services;
 
 import grupo2.docubot.dto.request.MessageRequestDto;
 import grupo2.docubot.dto.response.MessageResponseDto;
+import grupo2.docubot.exceptions.response.ResourceNotFoundException;
 import grupo2.docubot.mappers.MessageMapper;
 import grupo2.docubot.models.Chat;
 import grupo2.docubot.models.Message;
@@ -25,7 +26,7 @@ public class MessageService {
     public MessageResponseDto createMessage(MessageRequestDto messageRequestDto) {
 
         Chat chat = chatRepository.findById(messageRequestDto.getChatId())
-                .orElseThrow(() -> new RuntimeException("Chat not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Chat not found"));
 
         User sender = userService.findById(messageRequestDto.getSenderId());
 
@@ -49,10 +50,10 @@ public class MessageService {
     public MessageResponseDto forwardMessage(Long originalMessageId, Long toChatId, Long senderId) {
 
         Message originalMessage = messageRepository.findById(originalMessageId)
-                .orElseThrow(() -> new RuntimeException("Original message not found with id: " + originalMessageId));
+                .orElseThrow(() -> new ResourceNotFoundException("Original message not found with id: " + originalMessageId));
 
         Chat toChat = chatRepository.findById(toChatId)
-                .orElseThrow(() -> new RuntimeException("Chat not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Chat not found"));
 
         User sender = userService.findById(senderId);
 

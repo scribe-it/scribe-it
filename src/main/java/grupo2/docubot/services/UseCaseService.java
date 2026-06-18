@@ -2,7 +2,7 @@ package grupo2.docubot.services;
 
 import grupo2.docubot.dto.request.UseCaseRequestDto;
 import grupo2.docubot.dto.response.UseCaseResponseDto;
-import grupo2.docubot.exceptions.response.ResourceNotFound;
+import grupo2.docubot.exceptions.response.ResourceNotFoundException;
 import grupo2.docubot.mappers.UseCaseMapper;
 import grupo2.docubot.models.UseCase;
 import grupo2.docubot.models.UseCaseHistory;
@@ -26,7 +26,7 @@ public class UseCaseService {
 
     public UseCaseResponseDto findById(Long id){
         UseCase useCase = useCaseRepository.findById(id)
-                .orElseThrow(()->new ResourceNotFound("El Caso de uso no fue encontrado"));
+                .orElseThrow(()->new ResourceNotFoundException("El Caso de uso no fue encontrado"));
         return useCaseMapper.toDto(useCase);
     }
 
@@ -40,19 +40,19 @@ public class UseCaseService {
 
     public UseCase getEntityById(Long id) {
         return useCaseRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFound("..."));
+                .orElseThrow(() -> new ResourceNotFoundException("..."));
     }
 
     public String extractMessagesByUseCase(Long historyId){
         UseCaseHistory history  = useCaseHistoryRepository.findById(historyId)
-                .orElseThrow(()->new ResourceNotFound("El historial de mensajes no fue encontrado"));
+                .orElseThrow(()->new ResourceNotFoundException("El historial de mensajes no fue encontrado"));
 
         return history.getMessages();
     }
 
     public UseCaseResponseDto update(Long id, UseCaseRequestDto useCaseRequestDto){
         UseCase ExistinguUeCase = useCaseRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFound("Caso de uso no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Caso de uso no encontrado"));
         ExistinguUeCase.setActor(useCaseRequestDto.getActor());
         ExistinguUeCase.setPrecondition(useCaseRequestDto.getPrecondition());
         ExistinguUeCase.setTrigger(useCaseRequestDto.getTrigger());
@@ -63,7 +63,7 @@ public class UseCaseService {
 
     public void deleteById(Long id){
         useCaseRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFound("Caso de uso no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Caso de uso no encontrado"));
         useCaseRepository.deleteById(id);
     }
 

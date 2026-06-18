@@ -2,7 +2,7 @@ package grupo2.docubot.services;
 
 import grupo2.docubot.dto.request.DocumentCommentRequestDto;
 import grupo2.docubot.dto.response.DocumentCommentResponseDto;
-import grupo2.docubot.exceptions.response.ResourceNotFound;
+import grupo2.docubot.exceptions.response.ResourceNotFoundException;
 import grupo2.docubot.mappers.DocumentCommentMapper;
 import grupo2.docubot.models.Document;
 import grupo2.docubot.models.DocumentComment;
@@ -33,10 +33,10 @@ public class DocumentCommentService {
 
     public DocumentCommentResponseDto addComment(Long documentId, DocumentCommentRequestDto dto, Long userId) {
         Document document = documentRepository.findById(documentId)
-                .orElseThrow(() -> new ResourceNotFound("Documento no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Documento no encontrado"));
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFound("Usuario no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
 
         DocumentComment comment = commentMapper.toEntity(dto);
         comment.setDocument(document);
