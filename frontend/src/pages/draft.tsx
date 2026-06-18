@@ -1,11 +1,20 @@
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { UseCase } from "./editor";
-import { Card } from "@/components/ui/card";
 import { XIcon } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { RemoveUseCaseConfirmDialog, PublishDraftConfirmDialog } from "@/components";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog";
 
 type Draft = {
     id: number;
@@ -26,12 +35,14 @@ const splitNumberedItems = (text: string) => {
 };
 
 const Draft = () => {
-
-    const [ showDetails, setShowDetails ] = useState(0);
+    const [showDetails, setShowDetails] = useState(0);
     const [isRemoveDialogOpen, setIsRemoveDialogOpen] = useState(false);
     const [useCaseToRemove, setUseCaseToRemove] = useState<{ draftId: number; useCaseId: number } | null>(null);
     const [isPublishDialogOpen, setIsPublishDialogOpen] = useState(false);
     const [draftToPublish, setDraftToPublish] = useState<number | null>(null);
+    const [isDeleteDraftDialogOpen, setIsDeleteDraftDialogOpen] = useState(false);
+    const [draftToDelete, setDraftToDelete] = useState<number | null>(null);
+
     const {
         data: drafts
     } = useQuery({
@@ -40,7 +51,7 @@ const Draft = () => {
             const res = await fetch("/api/v1/document/drafts", {
                 headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
             });
-            if(!res.ok) throw new Error("Error obteniendo borradores");
+            if (!res.ok) throw new Error("Error obteniendo borradores");
             return res.json();
         }
     })
@@ -66,6 +77,7 @@ const Draft = () => {
     };
 
     const queryClient = useQueryClient();
+
     const {
         mutateAsync: removeUseCase,
         isPending: isRemovingUseCase
@@ -87,7 +99,6 @@ const Draft = () => {
             toast.error("No se pudo eliminar el caso de uso. Intenta nuevamente.");
         }
     })
-
 
     const {
         mutateAsync: publishDraft,
@@ -111,6 +122,30 @@ const Draft = () => {
         }
     })
 
+    const {
+        mutateAsync: deleteDraft,
+        isPending: isDeletingDraft,
+    } = useMutation({
+        mutationFn: async (draftId: number) => {
+            const res = await fetch(`/api/v1/document/${draftId}`, {
+                method: "DELETE",
+                headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+            });
+            if (!res.ok) {
+                throw new Error("Error eliminando borrador");
+            }
+        },
+        onSuccess: () => {
+            toast.success("Borrador eliminado exitosamente");
+            setIsDeleteDraftDialogOpen(false);
+            setDraftToDelete(null);
+            queryClient.invalidateQueries({ queryKey: ["drafts"] });
+        },
+        onError: () => {
+            toast.error("No se pudo eliminar el borrador. Intenta nuevamente.");
+        },
+    });
+
     const handleRemoveUseCase = async (draftId: number, useCaseId: number) => {
         setUseCaseToRemove({ draftId, useCaseId });
         setIsRemoveDialogOpen(true);
@@ -118,7 +153,6 @@ const Draft = () => {
 
     const handleConfirmRemoveUseCase = async () => {
         if (!useCaseToRemove) return;
-
         await removeUseCase({
             draftId: useCaseToRemove.draftId,
             useCaseId: useCaseToRemove.useCaseId,
@@ -137,86 +171,117 @@ const Draft = () => {
         setDraftToPublish(null);
     };
 
-  return (
-    <div className="flex h-[100vh] w-full flex-col gap-4 bg-background p-4 text-white">
-        <RemoveUseCaseConfirmDialog
-            open={isRemoveDialogOpen}
-            onOpenChange={(open) => {
-                setIsRemoveDialogOpen(open);
-                if (!open) setUseCaseToRemove(null);
-            }}
-            onCancel={() => {
-                setIsRemoveDialogOpen(false);
-                setUseCaseToRemove(null);
-            }}
-            onConfirm={handleConfirmRemoveUseCase}
-            isPending={isRemovingUseCase}
-        />
-        <PublishDraftConfirmDialog
-            open={isPublishDialogOpen}
-            onOpenChange={(open) => {
-                setIsPublishDialogOpen(open);
-                if (!open) setDraftToPublish(null);
-            }}
-            onCancel={() => {
-                setIsPublishDialogOpen(false);
-                setDraftToPublish(null);
-            }}
-            onConfirm={handleConfirmPublish}
-            isPending={isPublishingDraft}
-        />
-        <h1 className="text-2xl font-bold text-foreground w-full">Borradores</h1>
-        {
-            drafts?.length ? (
-                <ul className={showDetails ? "relative flex-1 min-h-0" : "grid flex-1 auto-rows-max grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4"}>
-                    {drafts.map((d: Draft) => (
-                        <Card
-                            key={d.id}
-                            className={
-                                showDetails === d.id
-                                    ? "absolute inset-0 z-50 m-0 overflow-y-auto rounded-lg border border-border bg-card p-6"
-                                    : showDetails
-                                        ? "hidden"
-                                        : "relative cursor-pointer rounded-lg border border-border p-4 transition-colors hover:bg-accent"
-                            }
-                        >
-                            {showDetails === d.id && (
-                                <XIcon
-                                    className="absolute top-4 right-4 cursor-pointer rounded-lg hover:bg-red-500"
-                                    onClick={() => handleToggleDetails(d.id)}
-                                />
-                            )}
-                            <p>Título: {d.title}</p>
-                            <div>
-                                <hr/>
-                                {
-                                    showDetails === d.id && d.content.length > 0 && (
-                                        <nav className="sticky top-0 z-10 mt-4 rounded-lg border border-border bg-background/90 p-3 backdrop-blur">
-                                            <p className="mb-2 text-sm font-semibold text-foreground">Indice de casos de uso</p>
-                                            <div className="flex flex-wrap gap-2">
-                                                {d.content.map((cu: UseCase) => (
-                                                    <Button
-                                                        key={`index-${cu.id}`}
-                                                        type="button"
-                                                        variant="secondary"
-                                                        size="sm"
-                                                        onClick={() => scrollToUseCase(d.id, cu.id)}
-                                                    >
-                                                        Caso #{cu.id}
-                                                    </Button>
-                                                ))}
-                                            </div>
-                                        </nav>
-                                    )
-                                }
-                                {
-                                    showDetails === d.id && (
-                                    d.content.map((cu: UseCase) => (
-                                        (() => {
-                                            const mainFlowItems = splitNumberedItems(cu.main_flow);
-                                            const hasNumberedSteps = mainFlowItems.length > 1;
+    const handleRequestDeleteDraft = (draftId: number) => {
+        setDraftToDelete(draftId);
+        setIsDeleteDraftDialogOpen(true);
+    };
 
-                                            return (
+    const handleConfirmDeleteDraft = async () => {
+        if (!draftToDelete) return;
+        await deleteDraft(draftToDelete);
+    };
+
+    return (
+        <div className="flex h-[100vh] w-full flex-col gap-4 bg-background p-4 text-white">
+            <RemoveUseCaseConfirmDialog
+                open={isRemoveDialogOpen}
+                onOpenChange={(open) => {
+                    setIsRemoveDialogOpen(open);
+                    if (!open) setUseCaseToRemove(null);
+                }}
+                onCancel={() => {
+                    setIsRemoveDialogOpen(false);
+                    setUseCaseToRemove(null);
+                }}
+                onConfirm={handleConfirmRemoveUseCase}
+                isPending={isRemovingUseCase}
+            />
+            <PublishDraftConfirmDialog
+                open={isPublishDialogOpen}
+                onOpenChange={(open) => {
+                    setIsPublishDialogOpen(open);
+                    if (!open) setDraftToPublish(null);
+                }}
+                onCancel={() => {
+                    setIsPublishDialogOpen(false);
+                    setDraftToPublish(null);
+                }}
+                onConfirm={handleConfirmPublish}
+                isPending={isPublishingDraft}
+            />
+            <Dialog open={isDeleteDraftDialogOpen} onOpenChange={setIsDeleteDraftDialogOpen}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Eliminar borrador</DialogTitle>
+                        <DialogDescription>
+                            Esta accion eliminara el borrador completo. Esta accion no se puede deshacer.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                        <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => {
+                                setIsDeleteDraftDialogOpen(false);
+                                setDraftToDelete(null);
+                            }}
+                            disabled={isDeletingDraft}
+                        >
+                            Cancelar
+                        </Button>
+                        <Button
+                            type="button"
+                            variant="destructive"
+                            onClick={handleConfirmDeleteDraft}
+                            disabled={isDeletingDraft}
+                        >
+                            {isDeletingDraft ? "Eliminando..." : "Eliminar"}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            <h1 className="text-2xl font-bold text-foreground w-full">Borradores</h1>
+            {drafts?.length ? (
+                <div className="grid flex-1 auto-rows-max grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+                    {drafts.map((d: Draft) => (
+                        showDetails === d.id ? (
+                            <Card
+                                key={d.id}
+                                className="col-span-full max-h-[calc(100vh-8rem)] overflow-y-auto rounded-lg border border-border bg-card p-6"
+                            >
+                                <div className="flex items-center justify-between mb-4">
+                                    <h2 className="text-xl font-bold text-foreground">{d.title}</h2>
+                                    <div className="flex items-center gap-2">
+                                        <Button onClick={() => handleRequestPublish(d.id)}>Publicar</Button>
+                                        <Button variant="outline" onClick={() => handleToggleDetails(d.id)}>
+                                            Cerrar detalle
+                                        </Button>
+                                    </div>
+                                </div>
+                                {d.content.length > 0 && (
+                                    <nav className="sticky top-0 z-10 mb-4 rounded-lg border border-border bg-background/90 p-3 backdrop-blur">
+                                        <p className="mb-2 text-sm font-semibold text-foreground">Indice de casos de uso</p>
+                                        <div className="flex flex-wrap gap-2">
+                                            {d.content.map((cu: UseCase) => (
+                                                <Button
+                                                    key={`index-${cu.id}`}
+                                                    type="button"
+                                                    variant="secondary"
+                                                    size="sm"
+                                                    onClick={() => scrollToUseCase(d.id, cu.id)}
+                                                >
+                                                    Caso #{cu.id}
+                                                </Button>
+                                            ))}
+                                        </div>
+                                    </nav>
+                                )}
+                                {d.content.map((cu: UseCase) => {
+                                    const mainFlowItems = splitNumberedItems(cu.main_flow);
+                                    const hasNumberedSteps = mainFlowItems.length > 1;
+
+                                    return (
                                         <div id={getUseCaseSectionId(d.id, cu.id)} key={cu.id} className="mt-4 scroll-mt-24 rounded-lg border border-border flex flex-col gap-4 p-4 relative">
                                             <XIcon className="absolute top-4 right-4 cursor-pointer rounded-lg hover:bg-red-500" onClick={() => handleRemoveUseCase(d.id, cu.id)} />
                                             <h1><span className="font-bold text-lg">Caso de uso N°: </span>{cu.id}</h1>
@@ -237,25 +302,71 @@ const Draft = () => {
                                             </div>
                                             <Button className="self-end">Editar</Button>
                                         </div>
+                                    );
+                                })}
+                            </Card>
+                        ) : (
+                            <Card key={d.id} className="relative rounded-lg border border-border">
+                                <XIcon
+                                    className="absolute top-2 right-2 z-10 cursor-pointer rounded-lg text-red-400 hover:bg-red-500/20"
+                                    onClick={() => handleRequestDeleteDraft(d.id)}
+                                />
+                                <CardHeader>
+                                    <div className="flex items-center justify-between gap-2">
+                                        <CardTitle className="text-lg">{d.title}</CardTitle>
+                                        <Badge variant="secondary" className="-translate-x-6">#{d.id}</Badge>
+                                    </div>
+                                </CardHeader>
+                                <CardContent className="space-y-4">
+                                    {d.content?.length ? (
+                                        d.content.map((cu: UseCase) => {
+                                            const mainFlowItems = splitNumberedItems(cu.main_flow);
+                                            const hasNumberedSteps = mainFlowItems.length > 1;
+
+                                            return (
+                                                <div key={cu.id} className="relative rounded-md border border-border p-3 space-y-2">
+                                                    <div className="flex items-center justify-between gap-2">
+                                                        <p className="font-medium text-foreground">Caso #{cu.id}</p>
+                                                        <Badge variant="outline">{cu.actor}</Badge>
+                                                    </div>
+                                                    <div className="space-y-1">
+                                                        <p className="text-xs text-muted-foreground">Flujo principal</p>
+                                                        {hasNumberedSteps ? (
+                                                            <ol className="list-decimal pl-5 text-sm space-y-1">
+                                                                {mainFlowItems.map((step, index) => (
+                                                                    <li key={`${cu.id}-step-${index}`}>
+                                                                        {step.replace(/^\d+\.\s*/, "")}
+                                                                    </li>
+                                                                ))}
+                                                            </ol>
+                                                        ) : (
+                                                            <p className="text-sm">{cu.main_flow}</p>
+                                                        )}
+                                                    </div>
+                                                    <XIcon
+                                                        className="absolute top-2 right-2 size-4 cursor-pointer rounded text-red-400 hover:bg-red-500/20"
+                                                        onClick={() => handleRemoveUseCase(d.id, cu.id)}
+                                                    />
+                                                </div>
                                             );
-                                        })()
-                                    ))
-                                    )
-                                }
-                            </div>
-                            <div className="flex items-center justify-center gap-2">
-                                <Button onClick={() => handleRequestPublish(d.id)}>Publicar</Button>
-                                <Button onClick={() => handleToggleDetails(d.id)}>{showDetails === d.id ? "Ocultar detalle" : "Ver detalle"}</Button>
-                            </div>
-                        </Card>
+                                        })
+                                    ) : (
+                                        <p className="text-sm text-muted-foreground">Sin casos de uso.</p>
+                                    )}
+                                    <div className="flex items-center justify-center gap-2 pt-2">
+                                        <Button onClick={() => handleRequestPublish(d.id)}>Publicar</Button>
+                                        <Button variant="outline" onClick={() => handleToggleDetails(d.id)}>Ver detalle</Button>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        )
                     ))}
-                </ul>
+                </div>
             ) : (
                 <p>No hay borradores guardados.</p>
-            )
-        }
-    </div>
-  )
+            )}
+        </div>
+    )
 }
 
 export default Draft

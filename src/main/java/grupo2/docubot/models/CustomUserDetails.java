@@ -1,5 +1,6 @@
 package grupo2.docubot.models;
 
+import grupo2.docubot.models.enums.RoleName;
 import lombok.AllArgsConstructor;
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
@@ -48,5 +49,7 @@ public class CustomUserDetails implements UserDetails {
 
     public String getFirstName() { return user.getFirstName(); }
 
-    public String getLastName() { return  user.getLastName(); }
+    public String getLastName() { return user.getLastName(); }
+
+    public RoleName getRoleName() { return user.getRole().stream().findFirst().map(Role::getName).orElse(null); }
 }

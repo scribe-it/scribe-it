@@ -35,5 +35,12 @@ export const AppRoutes = [
       const module = await import('@/pages/register-user')
       return { Component: module.default }
     }
+  },
+  {
+    path: Routes.profile,
+    async lazy() {
+      const module = await import('@/pages/profile')
+      return { Component: module.default }
+    }
   }
 ]

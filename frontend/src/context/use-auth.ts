@@ -6,7 +6,7 @@ interface AuthContextType {
   token: string | null;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
-  userData: { id: number, username: string; department: string } | null;
+  userData: { id: number, role: string, username: string; department: string, firstName: string, lastName: string} | null;
 }
 
 export function useAuth() {

@@ -18,6 +18,7 @@ import useChat from "@/hooks/use-chat";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useAuth } from "@/context/use-auth";
+import SearchBar from "@/components/search-bar";
 
 export interface User {
   id: number;
@@ -94,6 +95,8 @@ export function ChatWindow({ chatId }: { chatId: number }) {
     }
   };
 
+  const getUser = (userId: number) => data?.users.find((u) => u.id === userId);
+
   const handleForwardMessage = async (msg: Message) => {
     if (!stompClient) return;
     const response = await fetch("/api/v1/chat", {
@@ -134,7 +137,7 @@ export function ChatWindow({ chatId }: { chatId: number }) {
   return (
     <Card className="flex-1 h-[100vh] flex flex-col rounded-none pt-0">
       {/* Encabezado con estado en tiempo real */}
-      <CardHeader className="flex flex-row items-center justify-between bg-[#1e1e1c] p-4 border-b border-white/[0.07]">
+      <CardHeader className="flex flex-row items-center justify-between gap-4 bg-[#1e1e1c] p-4 border-b border-white/[0.07]">
         <div className="flex items-center space-x-3">
           {/* <Avatar> */}
             {/* <AvatarFallback>{companionName[0]}</AvatarFallback> */}
@@ -148,6 +151,7 @@ export function ChatWindow({ chatId }: { chatId: number }) {
             </p>
           </div>
         </div>
+          <SearchBar />
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button className="flex items-center text-muted-foreground gap-2">
@@ -176,20 +180,41 @@ export function ChatWindow({ chatId }: { chatId: number }) {
         <ScrollArea className="h-full pr-4">
           <div className="flex flex-col space-y-4">
             {data?.messages?.map((msg) => {
-              // const isMe = msg.senderId === currentUserId;
               const isMe = msg.user_id === userData?.id;
+              const sender = getUser(msg.user_id);
               return (
-                <div key={msg.id} className={`flex ${isMe ? "justify-end" : "justify-start"}`}>
-                  {isMe && <ChevronRight className={`size-8 text-muted-foreground hover:bg-white transition-transform duration-100 active:scale-75 rounded-full m-4`} onClick={() => handleForwardMessage(msg)}/>}
-                    <div className={`max-w-[70%] rounded-lg px-3 py-2 text-sm ${
-                    isMe ? "bg-primary text-primary-foreground rounded-tr-none" : "bg-muted rounded-tl-none"
+                <div key={msg.id} className={`flex items-center gap-1 ${isMe ? "justify-end" : "justify-start"}`}>
+                  {!isMe && (
+                    <Avatar className="size-8 shrink-0">
+                      <AvatarFallback className="bg-muted text-muted-foreground text-xs">
+                        {sender?.firstName?.charAt(0).toUpperCase()}{sender?.lastName?.charAt(0).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                  )}
+                  {isMe && (
+                    <ChevronRight className="size-5 text-muted-foreground hover:bg-white/10 transition-transform duration-100 active:scale-75 rounded-full cursor-pointer shrink-0" onClick={() => handleForwardMessage(msg)}/>
+                  )}
+                  <div className={`rounded-lg px-3 py-2 text-sm max-w-[70%] ${
+                    isMe ? "bg-primary text-primary-foreground rounded-br-none" : "bg-muted rounded-bl-none"
                   }`}>
+                    {!isMe && sender && (
+                      <p className="text-[10px] font-semibold text-foreground mb-1">
+                        {sender.firstName} {sender.lastName}
+                      </p>
+                    )}
                     <p>{msg.content}</p>
                     <span className="text-[10px] block text-right mt-1 opacity-70">{msg.timestamp}</span>
                   </div>
-                  {
-                    !isMe && <ChevronLeft className={`size-8 text-muted-foreground hover:bg-white transition-transform duration-100 active:scale-75 rounded-full m-4`} onClick={() => handleForwardMessage(msg)}/>
-                  }
+                  {!isMe && (
+                    <ChevronLeft className="size-5 text-muted-foreground hover:bg-white/10 transition-transform duration-100 active:scale-75 rounded-full cursor-pointer shrink-0" onClick={() => handleForwardMessage(msg)}/>
+                  )}
+                  {isMe && (
+                    <Avatar className="size-8 shrink-0">
+                      <AvatarFallback className="bg-primary text-primary-foreground text-xs">
+                        {userData?.firstName?.charAt(0).toUpperCase()}{userData?.lastName?.charAt(0).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                  )}
                 </div>
               );
             })}
