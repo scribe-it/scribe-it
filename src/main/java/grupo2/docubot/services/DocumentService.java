@@ -3,7 +3,9 @@ package grupo2.docubot.services;
 import grupo2.docubot.dto.request.DocumentRequestDto;
 import grupo2.docubot.dto.request.UseCaseRequestDto;
 import grupo2.docubot.dto.response.DocumentResponseDto;
+import grupo2.docubot.exceptions.response.NonPublishedDocumentException;
 import grupo2.docubot.exceptions.response.ResourceNotFound;
+import grupo2.docubot.exceptions.response.UnsafeToDeleteException;
 import grupo2.docubot.mappers.DocumentMapper;
 import grupo2.docubot.mappers.UseCaseMapper;
 import grupo2.docubot.models.Document;
@@ -71,6 +73,19 @@ public class DocumentService {
         return documentMapper.toDto(document);
     }
 
+    public DocumentResponseDto unpublishDocument(Long documentId){
+        Document document = documentRepository.findById(documentId)
+                .orElseThrow(() -> new ResourceNotFound("Documento no encontrado"));
+        if(document.getPublished() == true){
+            document.setPublished(false);
+            documentRepository.save(document);
+        }
+        else{
+            throw new NonPublishedDocumentException("El documento no fue publicado");
+        }
+        return documentMapper.toDto(document);
+    }
+
     public List<DocumentResponseDto> getAllPublished() {
         return documentRepository.findAllByPublishedTrue()
                 .stream()
@@ -80,9 +95,9 @@ public class DocumentService {
 
     public void deleteDraft(Long documentId) {
         Document document = documentRepository.findById(documentId)
-                .orElseThrow(() -> new RuntimeException("Document not found"));
+                .orElseThrow(() -> new ResourceNotFound("Document not found"));
         if(document.getPublished()) {
-            throw new RuntimeException("The document is published: cannot hard delete");
+            throw new UnsafeToDeleteException("The document is published: cannot hard delete");
         }
         documentRepository.delete(document);
     }

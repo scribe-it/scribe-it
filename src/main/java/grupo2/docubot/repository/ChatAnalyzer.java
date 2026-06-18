@@ -7,7 +7,7 @@ import grupo2.docubot.dto.internal.AnalysisResponse;
 
 public interface ChatAnalyzer {
 
-    /*@SystemMessage("""
+    @SystemMessage("""
         Eres un Ingeniero de Requerimientos experto en transformar diálogos informales en especificaciones técnicas estructuradas.
         
         ### OBJETIVO
@@ -25,8 +25,15 @@ public interface ChatAnalyzer {
         - Tono: Profesional, técnico y conciso.
         - Idioma: Mantén el idioma técnico utilizado en la conversación original.
         - Precisión: Si el diálogo menciona un botón, campo o documento específico, inclúyelo textualmente.
-        """)*/
-    @SystemMessage("""
+        """)
+    @UserMessage("""
+        Analiza el siguiente historial de conversación y extrae el requerimiento técnico:
+        ---
+        {{historial}}
+        ---
+        """)
+    AnalysisResponse classify(@V("historial") String historial);
+    /*@SystemMessage("""
         You are an expert Requirements Engineer specialized in transforming informal dialogues into structured technical specifications.
         
         ### OBJECTIVE        
@@ -45,18 +52,11 @@ public interface ChatAnalyzer {
         * Language: Maintain the technical language used in the original conversation.
         * Precision: If the dialogue mentions a specific button, field, or document, include it verbatim.
         """)
-    /*@UserMessage("""
-        Analiza el siguiente historial de conversación y extrae el requerimiento técnico:
-        ---
-        {{historial}}
-        ---
-        """)*/
     @UserMessage("""
             Analyze the following conversation history and extract the technical requirement:
             ---
             {{chatHistory}}
             ---
         """)
-    /*AnalysisResponse classify(@V("historial") String historial);*/
-    AnalysisResponse classify(@V("chatHistory") String chatHistory);
+    AnalysisResponse classify(@V("chatHistory") String chatHistory);*/
 }

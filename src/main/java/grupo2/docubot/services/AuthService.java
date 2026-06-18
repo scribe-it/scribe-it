@@ -84,7 +84,7 @@ public class AuthService {
                 token,
                 userDetails.getId(),
                 userDetails.getUsername(),
-                userDetails.getDepartment()
+                userDetails.getDepartment(),
                 userDetails.getFirstName(),
                 userDetails.getLastName()
         );
