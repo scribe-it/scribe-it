@@ -1,6 +1,7 @@
 package grupo2.docubot.services;
 
 import grupo2.docubot.dto.response.UserResponseDto;
+import grupo2.docubot.exceptions.response.UserNotFoundException;
 import grupo2.docubot.mappers.UserMapper;
 import grupo2.docubot.models.User;
 import grupo2.docubot.models.Role;
@@ -21,12 +22,12 @@ public class UserService {
 
     public User findById(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+                .orElseThrow(() -> new UserNotFoundException("User not found with id: " + id));
     }
 
     public User findAnalyst() {
         return userRepository.findByRole("ANALISTA")
-                .orElseThrow(() -> new RuntimeException(("User analyst not found")));
+                .orElseThrow(() -> new UserNotFoundException(("User analyst not found")));
     }
 
     @Transactional

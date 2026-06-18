@@ -4,7 +4,7 @@ import grupo2.docubot.dto.request.DocumentRequestDto;
 import grupo2.docubot.dto.request.UseCaseRequestDto;
 import grupo2.docubot.dto.response.DocumentResponseDto;
 import grupo2.docubot.exceptions.response.NonPublishedDocumentException;
-import grupo2.docubot.exceptions.response.ResourceNotFound;
+import grupo2.docubot.exceptions.response.ResourceNotFoundException;
 import grupo2.docubot.exceptions.response.UnsafeToDeleteException;
 import grupo2.docubot.mappers.DocumentMapper;
 import grupo2.docubot.mappers.UseCaseMapper;
@@ -44,13 +44,13 @@ public class DocumentService {
         }
         Document savedDocument = documentRepository.save(newDocument);
         return documentMapper.toDto(documentRepository.findById(savedDocument.getId())
-                .orElseThrow(() -> new ResourceNotFound("Documento no encontrado"))
+                .orElseThrow(() -> new ResourceNotFoundException("Documento no encontrado"))
         );
     }
 
     public DocumentResponseDto addUseCase(Long documentId, UseCaseRequestDto useCaseRequestDto) {
         Document document = documentRepository.findById(documentId)
-                .orElseThrow(() -> new ResourceNotFound("Documento no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Documento no encontrado"));
         UseCase useCase = useCaseMapper.toEntity(useCaseRequestDto);
         useCase = useCaseService.save(useCase);
         document.getContent().add(useCase);
@@ -60,14 +60,14 @@ public class DocumentService {
 
     public void removeUseCase(Long documentId, Long useCaseId) {
         Document document = documentRepository.findById(documentId)
-                .orElseThrow(() -> new ResourceNotFound("Documento no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Documento no encontrado"));
         document.getContent().removeIf(uc -> uc.getId().equals(useCaseId));
         documentRepository.save(document);
     }
 
     public DocumentResponseDto publishDocument(Long documentId) {
         Document document = documentRepository.findById(documentId)
-                .orElseThrow(() -> new ResourceNotFound("Documento no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Documento no encontrado"));
         document.setPublished(true);
         documentRepository.save(document);
         return documentMapper.toDto(document);
@@ -75,7 +75,7 @@ public class DocumentService {
 
     public DocumentResponseDto unpublishDocument(Long documentId){
         Document document = documentRepository.findById(documentId)
-                .orElseThrow(() -> new ResourceNotFound("Documento no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Documento no encontrado"));
         if(document.getPublished() == true){
             document.setPublished(false);
             documentRepository.save(document);
@@ -95,7 +95,7 @@ public class DocumentService {
 
     public void deleteDraft(Long documentId) {
         Document document = documentRepository.findById(documentId)
-                .orElseThrow(() -> new ResourceNotFound("Document not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Document not found"));
         if(document.getPublished()) {
             throw new UnsafeToDeleteException("The document is published: cannot hard delete");
         }

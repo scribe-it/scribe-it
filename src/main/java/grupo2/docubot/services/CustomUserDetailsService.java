@@ -1,5 +1,6 @@
 package grupo2.docubot.services;
 
+import grupo2.docubot.exceptions.response.UserNotFoundException;
 import grupo2.docubot.models.CustomUserDetails;
 import grupo2.docubot.models.User;
 import grupo2.docubot.repository.UserRepository;
@@ -16,7 +17,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) {
         User user = repository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
 
         return new CustomUserDetails(user);
     }

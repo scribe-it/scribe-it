@@ -8,7 +8,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 public class DocubotApplication {
 	public static void main(String[] args) {
-		//hola
 		SpringApplication.run(DocubotApplication.class, args);
 	}
 }

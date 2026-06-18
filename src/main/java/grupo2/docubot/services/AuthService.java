@@ -4,6 +4,7 @@ import grupo2.docubot.dto.request.UserLoginRequestDto;
 import grupo2.docubot.dto.request.UserRegisterRequestDto;
 import grupo2.docubot.dto.response.AuthResponseDto;
 import grupo2.docubot.dto.response.UserResponseRegisterDto;
+import grupo2.docubot.exceptions.response.InvalidOperationException;
 import grupo2.docubot.mappers.RegisterMapper;
 import grupo2.docubot.models.CustomUserDetails;
 import grupo2.docubot.models.Role;
@@ -64,7 +65,7 @@ public class AuthService {
         System.out.println(roles);
 
         if (roles.isEmpty()) {
-            throw new RuntimeException("Debe seleccionar al menos un rol válido.");
+            throw new InvalidOperationException("Debe seleccionar al menos un rol válido.");
         }
 
         User user = User.builder()
@@ -95,7 +96,7 @@ public class AuthService {
         List<Role> roles = roleRepository.findAllById(registerRequest.getRoleId());
 
         if (roles.isEmpty()) {
-            throw new RuntimeException("Debe seleccionar al menos un rol válido.");
+            throw new InvalidOperationException("Debe seleccionar al menos un rol válido.");
         }
 
         User user = User.builder()
