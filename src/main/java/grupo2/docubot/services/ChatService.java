@@ -2,7 +2,7 @@ package grupo2.docubot.services;
 
 import grupo2.docubot.dto.request.ChatRequestDto;
 import grupo2.docubot.dto.response.ChatResponseDto;
-import grupo2.docubot.exceptions.response.RecourseNotFound;
+import grupo2.docubot.exceptions.response.ResourceNotFound;
 import grupo2.docubot.mappers.ChatMapper;
 import grupo2.docubot.models.Chat;
 import grupo2.docubot.models.User;
@@ -49,14 +49,14 @@ public class ChatService {
     public Chat getEntityById(Long id) {
 
         return chatRepository.findById(id)
-                .orElseThrow(()-> new RecourseNotFound("El Chat con id "+ id +" no fue encontrado"));
+                .orElseThrow(()-> new ResourceNotFound("El Chat con id "+ id +" no fue encontrado"));
 
     }
 
     public ChatResponseDto getById(Long id) {
 
         Chat chat = chatRepository.findById(id)
-                .orElseThrow(()-> new RecourseNotFound("El Chat con id "+ id +" no fue encontrado"));
+                .orElseThrow(()-> new ResourceNotFound("El Chat con id "+ id +" no fue encontrado"));
 
         //Puede haber usuarios que se dieron de alta después de creado el chat. Por eso lo hacemos manual
         List<User> users = userService.getByDepartment(chat.getDepartment());
@@ -92,7 +92,7 @@ public class ChatService {
     public List<User> addUser(Long chatId,Long userId){
         //Validando la existencia del chat
         Chat chat = chatRepository.findById(chatId)
-                .orElseThrow(()-> new RecourseNotFound("El Chat con id "+ chatId +" no fue encontrado"));
+                .orElseThrow(()-> new ResourceNotFound("El Chat con id "+ chatId +" no fue encontrado"));
         //Validando la existencia del usuario en el sistema
         User user = userService.findById(userId);
 
