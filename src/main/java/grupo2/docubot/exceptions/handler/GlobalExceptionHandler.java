@@ -20,7 +20,7 @@ public class GlobalExceptionHandler {
          return build(e, HttpStatus.INTERNAL_SERVER_ERROR, request);
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
+    /*@ExceptionHandler(MethodArgumentNotValidException.class)
     public  ResponseEntity<Map<String,String>> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex){
         Map<String,String> errors=new HashMap<>();
 
@@ -28,7 +28,24 @@ public class GlobalExceptionHandler {
                 .forEach(e->errors.put(e.getField(),e.getDefaultMessage()));
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
+    }*/
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponseDto> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex, HttpServletRequest request) {
+
+        // 1. Une todos los errores de los campos en una sola cadena de texto
+        StringBuilder errorMessage = new StringBuilder("Errores de validación: ");
+        ex.getBindingResult().getFieldErrors().forEach(e ->
+                errorMessage.append(String.format("[%s: %s] ", e.getField(), e.getDefaultMessage()))
+        );
+
+        // 2. Crea una nueva excepción temporal con el mensaje detallado para el método build
+        Exception customException = new Exception(errorMessage.toString().trim());
+
+        // 3. Invoca tu método build existente
+        return build(customException, HttpStatus.BAD_REQUEST, request);
     }
+
 
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ErrorResponseDto> handleBadCredentialsException(BadCredentialsException ex, HttpServletRequest request){

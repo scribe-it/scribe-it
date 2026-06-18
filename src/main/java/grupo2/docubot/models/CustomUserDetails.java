@@ -45,4 +45,8 @@ public class CustomUserDetails implements UserDetails {
     }
 
     public String getDepartment() { return user.getDepartment(); }
+
+    public String getFirstName() { return user.getFirstName(); }
+
+    public String getLastName() { return  user.getLastName(); }
 }
