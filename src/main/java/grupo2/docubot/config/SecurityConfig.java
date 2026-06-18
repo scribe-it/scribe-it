@@ -40,6 +40,12 @@ public class SecurityConfig {
                         //Momentaneamente dejamos los endpoints de chat sin restricciones
                         .requestMatchers("/ws-stomp").permitAll()
 
+                        .requestMatchers(
+                                "/swagger-ui/**",
+                                "/swagger-ui.html",
+                                "/v3/api-docs/**"
+                        ).permitAll()
+
                         // Cualquier otra ruta residual fuera de /api
                         .anyRequest().denyAll()
                 )

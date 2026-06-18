@@ -12,7 +12,7 @@ import {
     SidebarMenuItem,
     SidebarTrigger,
   } from "@/components/ui/sidebar"
-import { Code, FilePenLine, FileText, LogOut, MessageSquare, Moon, Plus, Sun, UserPlus } from "lucide-react"
+import { Code, FilePenLine, FileText, LogOut, MessageSquare, Moon, Plus, Sun, User, UserPlus } from "lucide-react"
 import { useTheme } from "@/hooks/use-theme"
 import { useAuth } from "@/context/use-auth"
 import { Link, useLocation } from "react-router"
@@ -23,6 +23,7 @@ const items = [
   {name:"editor", url: "editor", icon: Code},
   {name:"borradores", url: "drafts", icon: FilePenLine},
   {name:"publicaciones", url: "publicaciones", icon: FileText},
+  {name:"perfil", url: "perfil", icon: User},
   {name:"registrar usuario", url: "register-user", icon: UserPlus},
 ] as const
 
@@ -30,8 +31,8 @@ const items = [
     const { theme, toggle } = useTheme()
     const { pathname } = useLocation()
     const { userData, logout } = useAuth()
-
-    const isAnalyst = !userData?.department
+    console.log(userData)
+    const isAnalyst = userData?.role === "ANALISTA"
 
     return (
       <Sidebar collapsible="icon" className="border-r border-white/[0.07] bg-[#222220]">
@@ -60,12 +61,12 @@ const items = [
                 </SidebarMenuButton>
               </SidebarMenuItem>
             ))}
-            {!isAnalyst && items.filter((item) => ["", "publicaciones"].includes(item.url)).map((item) => (
+            {!isAnalyst && items.filter((item) => ["", "publicaciones", "perfil"].includes(item.url)).map((item) => (
               <SidebarMenuItem key={item.name}>
                 <SidebarMenuButton asChild isActive={pathname === `/${item.url}`}>
                   <Link to={item.url} >
                     <item.icon />
-                    {item.name === "publicaciones" && <span>{item.name.charAt(0).toUpperCase() + item.name.slice(1)}</span>}
+                    {item.name !== "chats" && <span>{item.name.charAt(0).toUpperCase() + item.name.slice(1)}</span>}
                     {item.name === "chats" && <span>Chat</span>}
                   </Link>
                 </SidebarMenuButton>

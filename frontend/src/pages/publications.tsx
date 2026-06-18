@@ -1,24 +1,27 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
-import { MessageSquare, Send } from "lucide-react";
+import { FileText, XIcon } from "lucide-react";
+import html2canvas from "html2canvas";
+import { jsPDF } from "jspdf";
 import type { UseCase } from "./editor";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { CommentsSection } from "./comments-section";
 
 type PublishedDocument = {
   id: number;
   title: string;
   content: UseCase[];
-};
-
-type Comment = {
-  id: number;
-  text: string;
-  authorName: string;
-  createdAt: string;
 };
 
 const splitNumberedItems = (text: string) => {
@@ -28,140 +31,11 @@ const splitNumberedItems = (text: string) => {
     .filter(Boolean);
 };
 
-const formatDate = (dateStr: string) => {
-  const date = new Date(dateStr);
-  return date.toLocaleString("es-ES", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-};
-
-const CommentsSection = ({ documentId }: { documentId: number }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [newComment, setNewComment] = useState("");
-
+const Publications = () => {
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [publicationToDelete, setPublicationToDelete] = useState<number | null>(null);
   const queryClient = useQueryClient();
 
-  const {
-    data: comments,
-    isLoading,
-  } = useQuery<Comment[]>({
-    queryKey: ["comments", documentId],
-    queryFn: async () => {
-      const res = await fetch(`/api/v1/document/${documentId}/comments`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      });
-      if (!res.ok) throw new Error("Error obteniendo comentarios");
-      return res.json();
-    },
-    enabled: isOpen,
-  });
-
-  const {
-    mutateAsync: addComment,
-    isPending: isAdding,
-  } = useMutation({
-    mutationFn: async (text: string) => {
-      const res = await fetch(`/api/v1/document/${documentId}/comments`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify({ text }),
-      });
-      if (!res.ok) throw new Error("Error agregando comentario");
-      return res.json();
-    },
-    onSuccess: () => {
-      toast.success("Comentario agregado");
-      setNewComment("");
-      queryClient.invalidateQueries({ queryKey: ["comments", documentId] });
-    },
-    onError: () => {
-      toast.error("No se pudo agregar el comentario");
-    },
-  });
-
-  const handleSubmit = async () => {
-    if (!newComment.trim()) return;
-    await addComment(newComment.trim());
-  };
-
-  return (
-    <div className="mt-4 border-t border-border pt-3">
-      <Button
-        variant="ghost"
-        size="sm"
-        className="flex items-center gap-2 text-muted-foreground"
-        onClick={() => setIsOpen(!isOpen)}
-      >
-        <MessageSquare className="size-4" />
-        {isOpen ? "Ocultar comentarios" : `Comentarios (${comments?.length ?? 0})`}
-      </Button>
-
-      {isOpen && (
-        <div className="mt-3 space-y-3">
-          {isLoading && (
-            <p className="text-sm text-muted-foreground">Cargando comentarios...</p>
-          )}
-
-          {!isLoading && (!comments || comments.length === 0) && (
-            <p className="text-sm text-muted-foreground">Sin comentarios aún.</p>
-          )}
-
-          {!isLoading && comments && comments.length > 0 && (
-            <div className="space-y-2 max-h-60 overflow-y-auto">
-              {comments.map((comment) => (
-                <div
-                  key={comment.id}
-                  className="rounded-md border border-border p-2 text-sm"
-                >
-                  <div className="flex items-center justify-between gap-2 mb-1">
-                    <span className="font-medium text-foreground">
-                      {comment.authorName}
-                    </span>
-                    <span className="text-xs text-muted-foreground">
-                      {formatDate(comment.createdAt)}
-                    </span>
-                  </div>
-                  <p className="text-muted-foreground">{comment.text}</p>
-                </div>
-              ))}
-            </div>
-          )}
-
-          <div className="flex gap-2">
-            <Input
-              placeholder="Escribe un comentario..."
-              value={newComment}
-              onChange={(e) => setNewComment(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault();
-                  handleSubmit();
-                }
-              }}
-              disabled={isAdding}
-            />
-            <Button
-              size="icon"
-              onClick={handleSubmit}
-              disabled={isAdding || !newComment.trim()}
-            >
-              <Send className="size-4" />
-            </Button>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-};
-
-const Publications = () => {
   const {
     data: publications,
     isLoading,
@@ -181,8 +55,123 @@ const Publications = () => {
     },
   });
 
+  const {
+    mutateAsync: deletePublication,
+    isPending: isDeletingPublication,
+  } = useMutation({
+    mutationFn: async (documentId: number) => {
+      const res = await fetch(`/api/v1/document/${documentId}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      });
+      if (!res.ok) {
+        throw new Error("Error eliminando publicacion");
+      }
+    },
+    onSuccess: () => {
+      toast.success("Publicacion eliminada exitosamente");
+      setIsDeleteDialogOpen(false);
+      setPublicationToDelete(null);
+      queryClient.invalidateQueries({ queryKey: ["published-documents"] });
+    },
+    onError: () => {
+      toast.error("No se pudo eliminar la publicacion. Intenta nuevamente.");
+    },
+  });
+
+  const handleRequestDeletePublication = (documentId: number) => {
+    setPublicationToDelete(documentId);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const handleConfirmDeletePublication = async () => {
+    if (!publicationToDelete) return;
+    await deletePublication(publicationToDelete);
+  };
+
+  const exportPDF = async (publication: PublishedDocument) => {
+    const loading = toast.loading("Generando PDF...");
+
+    const content = document.createElement("div");
+    content.style.cssText = "padding: 2rem; font-family: sans-serif; color: #000;";
+    content.innerHTML = `
+      <h1 style="font-size: 1.5rem; margin-bottom: 0.5rem;">${publication.title}</h1>
+      <hr style="margin-bottom: 1.5rem; border-color: #ccc;" />
+      ${publication.content.map((uc) => {
+        const flowSteps = splitNumberedItems(uc.main_flow);
+        const hasNumberedSteps = flowSteps.length > 1;
+        return `
+          <div style="margin-bottom: 1.5rem; border: 1px solid #ddd; border-radius: 8px; padding: 1rem;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+              <strong>Caso #${uc.id}</strong>
+              <span style="font-size: 0.875rem; color: #666;">${uc.actor}</span>
+            </div>
+            <p style="font-size: 0.75rem; color: #888; margin-bottom: 0.25rem;">Flujo principal</p>
+            ${hasNumberedSteps ? `<ol style="margin: 0; padding-left: 1.25rem;">${flowSteps.map(s => `<li style="font-size: 0.875rem;">${s.replace(/^\d+\.\s*/, "")}</li>`).join("")}</ol>` : `<p style="font-size: 0.875rem;">${uc.main_flow}</p>`}
+          </div>
+        `;
+      }).join("")}
+    `;
+    document.body.appendChild(content);
+
+    const canvas = await html2canvas(content, { scale: 2 });
+    document.body.removeChild(content);
+
+    const imgData = canvas.toDataURL("image/png");
+    const pdf = new jsPDF("p", "mm", "a4");
+    const imgWidth = 190;
+    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+    let heightLeft = imgHeight;
+    let position = 0;
+
+    pdf.addImage(imgData, "PNG", 10, position, imgWidth, imgHeight);
+    heightLeft -= pdf.internal.pageSize.getHeight() - 20;
+
+    while (heightLeft > 0) {
+      position = heightLeft - imgHeight;
+      pdf.addPage();
+      pdf.addImage(imgData, "PNG", 10, position, imgWidth, imgHeight);
+      heightLeft -= pdf.internal.pageSize.getHeight() - 20;
+    }
+
+    pdf.save(`${publication.title}.pdf`);
+    toast.dismiss(loading);
+    toast.success("PDF exportado exitosamente");
+  };
+
   return (
     <div className="p-6 space-y-6 bg-background w-full min-h-screen">
+      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Eliminar publicacion</DialogTitle>
+            <DialogDescription>
+              Esta accion eliminara la publicacion completa. Esta accion no se puede deshacer.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => {
+                setIsDeleteDialogOpen(false);
+                setPublicationToDelete(null);
+              }}
+              disabled={isDeletingPublication}
+            >
+              Cancelar
+            </Button>
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={handleConfirmDeletePublication}
+              disabled={isDeletingPublication}
+            >
+              {isDeletingPublication ? "Eliminando..." : "Eliminar"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
       <h1 className="text-2xl font-bold text-foreground w-full">Publicaciones</h1>
 
       {isLoading && (
@@ -200,11 +189,25 @@ const Publications = () => {
       {!isLoading && !isError && !!publications?.length && (
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {publications.map((publication) => (
-            <Card key={publication.id} className="rounded-lg border border-border">
+            <Card key={publication.id} className="relative rounded-lg border border-border">
+              <XIcon
+                className="absolute top-2 right-2 z-10 cursor-pointer rounded-lg text-red-400 hover:bg-red-500/20"
+                onClick={() => handleRequestDeletePublication(publication.id)}
+              />
               <CardHeader>
                 <div className="flex items-center justify-between gap-2">
                   <CardTitle className="text-lg">{publication.title}</CardTitle>
-                  <Badge variant="secondary">#{publication.id}</Badge>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="size-8 -translate-x-5"
+                      onClick={() => exportPDF(publication)}
+                    >
+                      <FileText className="size-4" />
+                    </Button>
+                    <Badge variant="secondary" className="-translate-x-6">#{publication.id}</Badge>
+                  </div>
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">

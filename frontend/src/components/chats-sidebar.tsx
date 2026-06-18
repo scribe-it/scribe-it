@@ -19,7 +19,7 @@ export const SecondarySidebar = ({ chatId, setChatId }: { chatId: number, setCha
     const [showForm, setShowForm] = useState(false)
     const { userData } = useAuth() 
     const queryClient = useQueryClient();
-    const isAnalyst = !userData?.department;
+    const isAnalyst = userData?.role === "ANALISTA";
 
     const {
         data: chats

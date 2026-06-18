@@ -9,7 +9,7 @@ import grupo2.docubot.mappers.RegisterMapper;
 import grupo2.docubot.models.CustomUserDetails;
 import grupo2.docubot.models.Role;
 import grupo2.docubot.models.User;
-import grupo2.docubot.repository.RoleRepostory;
+import grupo2.docubot.repository.RoleRepository;
 import grupo2.docubot.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -31,26 +31,23 @@ public class AuthService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
-    private final RoleRepostory roleRepository;
+    private final RoleRepository roleRepository;
 
     public AuthResponseDto login(UserLoginRequestDto loginRequest) {
 
-        //Validando Credenciales
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken (loginRequest.getEmail(),loginRequest.getPassword())
         );
 
-        //Recordamos que el usuario ya inicio sesion para su proxima peticion
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         CustomUserDetails userDetails=(CustomUserDetails) authentication.getPrincipal();
 
-        //Generando token
         String token = jwtService.generateToken(userDetails);
-
 
         return new AuthResponseDto(
                 token,
+                userDetails.getRoleName(),
                 userDetails.getId(),
                 userDetails.getUsername(),
                 userDetails.getDepartment(),
@@ -59,7 +56,6 @@ public class AuthService {
         );
     }
 
-    /* Metodo anteriormente usado para cargar el analista en el bd}*/
     public AuthResponseDto register(UserRegisterRequestDto registerRequest){
         List<Role> roles = roleRepository.findAllById(registerRequest.getRoleId());
         System.out.println(roles);
@@ -83,6 +79,7 @@ public class AuthService {
 
         return new AuthResponseDto(
                 token,
+                userDetails.getRoleName(),
                 userDetails.getId(),
                 userDetails.getUsername(),
                 userDetails.getDepartment(),
@@ -91,7 +88,6 @@ public class AuthService {
         );
     }
 
-    // Metodo para cargar user con cualquier rol
     public UserResponseRegisterDto registerByAdmin(UserRegisterRequestDto registerRequest){
         List<Role> roles = roleRepository.findAllById(registerRequest.getRoleId());
 

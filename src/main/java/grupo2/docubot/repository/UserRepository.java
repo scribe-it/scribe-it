@@ -1,7 +1,8 @@
 package grupo2.docubot.repository;
 
+import grupo2.docubot.models.Role;
 import grupo2.docubot.models.User;
-import grupo2.docubot.models.enums.Role;
+import grupo2.docubot.models.enums.RoleName;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
