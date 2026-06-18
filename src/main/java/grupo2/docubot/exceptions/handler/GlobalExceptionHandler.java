@@ -1,6 +1,8 @@
 package grupo2.docubot.exceptions.handler;
 
+import grupo2.docubot.dto.response.ErrorResponseDto;
 import grupo2.docubot.exceptions.response.*;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -14,8 +16,8 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<String> handleException(Exception e) {
-        return ResponseEntity.status(500).body("An error occurred: " + e.getMessage());
+    public ResponseEntity<ErrorResponseDto> handleException(Exception e, HttpServletRequest request) {
+         return build(e, HttpStatus.INTERNAL_SERVER_ERROR, request);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -29,33 +31,42 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<String> handleBadCredentialsException(BadCredentialsException ex){
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
+    public ResponseEntity<ErrorResponseDto> handleBadCredentialsException(BadCredentialsException ex, HttpServletRequest request){
+        return build(ex, HttpStatus.UNAUTHORIZED, request);
     }
 
     @ExceptionHandler(InvalidOperationException.class)
-    public ResponseEntity<String> handleInvalidOperationException(InvalidOperationException ex){
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    public ResponseEntity<ErrorResponseDto> handleInvalidOperationException(InvalidOperationException ex, HttpServletRequest request){
+        return build(ex, HttpStatus.BAD_REQUEST, request);
     }
 
     @ExceptionHandler(NonPublishedDocumentException.class)
-    public ResponseEntity<String> handleNonPublishedDocumentException(NonPublishedDocumentException ex){
-        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(ex.getMessage());
+    public ResponseEntity<ErrorResponseDto> handleNonPublishedDocumentException(NonPublishedDocumentException ex, HttpServletRequest request){
+        return build(ex, HttpStatus.UNPROCESSABLE_ENTITY, request);
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<String> handleResourseNotFoundException(ResourceNotFoundException ex){
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    public ResponseEntity<ErrorResponseDto> handleResourseNotFoundException(ResourceNotFoundException ex, HttpServletRequest request){
+         return build(ex, HttpStatus.NOT_FOUND, request);
     }
 
     @ExceptionHandler(UnsafeToDeleteException.class)
-    public ResponseEntity<String> handleUnsafeToDeleteException(UnsafeToDeleteException ex){
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+    public ResponseEntity<ErrorResponseDto> handleUnsafeToDeleteException(UnsafeToDeleteException ex, HttpServletRequest request){
+         return build(ex, HttpStatus.CONFLICT, request);
     }
 
     @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<String> handleUserNotFoundException(UserNotFoundException ex){
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    public ResponseEntity<ErrorResponseDto> handleUserNotFoundException(UserNotFoundException ex, HttpServletRequest request){
+         return build(ex, HttpStatus.NOT_FOUND, request);
     }
 
+    private ResponseEntity<ErrorResponseDto> build(Exception ex, HttpStatus status, HttpServletRequest request){
+        ErrorResponseDto errorResponseDto = new ErrorResponseDto(
+                ex.getMessage(),
+                status.value(),
+                status.getReasonPhrase(),
+                request.getRequestURI()
+        );
+        return new ResponseEntity<>(errorResponseDto, status);
+    }
 }
