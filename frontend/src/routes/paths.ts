@@ -7,6 +7,6 @@ export const Routes = {
     drafts: '/drafts',
     publications: '/publicaciones',
     chatDetail: (chatId:string) => `/chat/${chatId}`,
-    profile: '/profile',
+    profile: '/perfil',
     settings: '/settings',
 };

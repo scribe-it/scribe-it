@@ -7,8 +7,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [token, setToken] = useState<string | null>(() => localStorage.getItem("token"));
   const [userData, setUserData] = useState<{
     id: number;
+    role: string;
     username: string;
     department: string;
+    firstName: string;
+    lastName: string;
   } | null>(() => {
   const stored = localStorage.getItem("userData");
   return stored ? JSON.parse(stored) : null;
@@ -23,7 +26,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const data = await res.json();
     localStorage.setItem("token", data.token);
     setToken(data.token);
-    const userData = { id: data.userId, username: data.username, department: data.department };
+    const userData = { id: data.userId, role: data.role, username: data.username, department: data.department, firstName: data.firstName, lastName: data.lastName };
     setUserData(userData);
     localStorage.setItem("userData", JSON.stringify(userData));
   };

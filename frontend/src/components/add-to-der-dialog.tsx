@@ -24,7 +24,7 @@ const AddToDerDialog = ({ useCase }: { useCase: UseCase }) => {
     } = useQuery({
         queryKey: ["documents"],
         queryFn: async () => {
-            const res = await fetch("/api/v1/document", {
+            const res = await fetch("/api/v1/document/drafts", {
                 headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
             });
             if(!res.ok) throw new Error("Error obteniendo documentos");

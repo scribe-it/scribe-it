@@ -24,26 +24,28 @@ export default function LoginPage() {
   };
   return (
     <div className="flex items-center justify-center h-screen bg-muted/30">
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-80 p-8 bg-card rounded-xl shadow-panel">
-        <img src={"/docubot_logo.png"} alt="Logo" className="mx-auto mb-4 w-72" />
-        {error && <p className="text-destructive text-sm">{error}</p>}
-        <Input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <Input
-          type="password"
-          placeholder="Contraseña"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <Button type="submit" className="w-full">
-          Ingresar
-        </Button>
+      <form onSubmit={handleSubmit} className="flex flex-col w-[600px] bg-card rounded-xl shadow-panel overflow-hidden">
+        <img src={"/docubot_logo_dark.png"} alt="Logo" className="w-full" />
+        <div className="flex flex-col gap-4 p-8 pt-6">
+          {error && <p className="text-destructive text-sm">{error}</p>}
+          <Input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          <Input
+            type="password"
+            placeholder="Contraseña"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <Button type="submit" className="w-full">
+            Ingresar
+          </Button>
+        </div>
       </form>
     </div>
   );
