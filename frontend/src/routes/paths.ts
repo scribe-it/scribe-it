@@ -1,7 +1,7 @@
 export const Routes = {
     home: '/',
     logIn: '/log-in',
-    signUp: '/register-user',
+    users: '/gestionar-usuarios',
     editor: '/editor',
     chats: '/chats',
     drafts: '/drafts',

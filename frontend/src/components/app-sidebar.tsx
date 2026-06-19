@@ -24,14 +24,13 @@ const items = [
   {name:"borradores", url: "drafts", icon: FilePenLine},
   {name:"publicaciones", url: "publicaciones", icon: FileText},
   {name:"perfil", url: "perfil", icon: User},
-  {name:"registrar usuario", url: "register-user", icon: UserPlus},
+  {name:"gestionar usuarios", url: "gestionar-usuarios", icon: UserPlus},
 ] as const
 
   export function AppSidebar() {
     const { theme, toggle } = useTheme()
     const { pathname } = useLocation()
     const { userData, logout } = useAuth()
-    console.log(userData)
     const isAnalyst = userData?.role === "ANALISTA"
 
     return (

@@ -30,9 +30,9 @@ export const AppRoutes = [
     }
   },
   {
-    path: Routes.signUp,
+    path: Routes.users,
     async lazy() {
-      const module = await import('@/pages/register-user')
+      const module = await import('@/pages/manage-users')
       return { Component: module.default }
     }
   },
