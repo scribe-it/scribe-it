@@ -3,8 +3,11 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { UseCase } from "./editor";
-import { XIcon } from "lucide-react";
-import { useState } from "react";
+import { Search, XIcon } from "lucide-react";
+import { useState, useMemo } from "react";
+import { Input } from "@/components/ui/input";
+import { usePagination } from "@/hooks/use-pagination";
+import { DataPagination } from "@/components/data-pagination";
 import { toast } from "sonner";
 import { RemoveUseCaseConfirmDialog, PublishDraftConfirmDialog } from "@/components";
 import {
@@ -42,6 +45,7 @@ const Draft = () => {
     const [draftToPublish, setDraftToPublish] = useState<number | null>(null);
     const [isDeleteDraftDialogOpen, setIsDeleteDraftDialogOpen] = useState(false);
     const [draftToDelete, setDraftToDelete] = useState<number | null>(null);
+    const [searchQuery, setSearchQuery] = useState("");
 
     const {
         data: drafts
@@ -55,6 +59,13 @@ const Draft = () => {
             return res.json();
         }
     })
+
+    const filteredDrafts = useMemo(
+        () => (drafts as Draft[] | undefined)?.filter((d) => d.title.toLowerCase().includes(searchQuery.toLowerCase())),
+        [drafts, searchQuery]
+    );
+
+    const { page, setPage, totalPages, paginatedItems: paginatedDrafts } = usePagination(filteredDrafts, 8);
 
     const handleToggleDetails = (id: number) => {
         const nextId = showDetails === id ? 0 : id;
@@ -241,10 +252,21 @@ const Draft = () => {
                 </DialogContent>
             </Dialog>
 
-            <h1 className="text-2xl font-bold text-foreground w-full">Borradores</h1>
-            {drafts?.length ? (
+            <div className="flex items-center gap-4 w-full">
+                <h1 className="text-2xl font-bold text-foreground">Borradores</h1>
+                <div className="relative ml-auto max-w-xl border border-white/[0.07] rounded-md">
+                    <Search className="absolute left-2.5 top-2.5 size-4 text-muted-foreground" />
+                    <Input
+                        placeholder="Buscar por título..."
+                        value={searchQuery}
+                        onChange={(e) => { setSearchQuery(e.target.value); setPage(1); }}
+                        className="pl-8"
+                    />
+                </div>
+            </div>
+            {filteredDrafts?.length ? (
                 <div className="grid flex-1 auto-rows-max grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
-                    {drafts.map((d: Draft) => (
+                    {(showDetails ? drafts : paginatedDrafts).map((d: Draft) => (
                         showDetails === d.id ? (
                             <Card
                                 key={d.id}
@@ -363,8 +385,9 @@ const Draft = () => {
                     ))}
                 </div>
             ) : (
-                <p>No hay borradores guardados.</p>
+                <p>{searchQuery ? "No se encontraron borradores." : "No hay borradores guardados."}</p>
             )}
+            {!showDetails && <DataPagination page={page} totalPages={totalPages} onPageChange={setPage} />}
         </div>
     )
 }
