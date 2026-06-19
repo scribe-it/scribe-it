@@ -17,7 +17,7 @@ public interface ChatAnalyzer {
         Debes responder estrictamente con un objeto JSON que contenga:
         1. "precondition": Requisitos previos necesarios para iniciar el flujo.
         2. "trigger": Acción o evento específico que dispara el proceso.
-        3. "main_flow": Array de strings. Cada string debe iniciar con su número de paso (Ej: "1. Acción..."). 
+        3. "main_flow": Un solo string que contenga los pasos numerados y separados por saltos de línea (ej.: "1. El usuario clickea el botón\\n2. El sistema guarda la data").
            Separa claramente las acciones del usuario de las respuestas del sistema.
         4. "poscondition": Estado final del sistema tras completar el flujo.
         
