@@ -8,23 +8,35 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
 import grupo2.docubot.models.User;
-import grupo2.docubot.services.UserService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.List;
+
 @Tag(name="Usuario", description="Gestión del perfil de usuario logueado")
+@PreAuthorize("hasRole('ANALISTA')")
 @RestController
 @RequestMapping("/api/v1/user")
 @RequiredArgsConstructor
 public class UserController {
 
-    private final UserService service;
+    private final UserService userService;
+
+    @Operation(summary = "Listar todos los usuarios", description = "Devuelve todos los usuarios registrados. Solo accesible para ANALISTA.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Lista de usuarios"),
+            @ApiResponse(responseCode = "401", description = "No autenticado"),
+            @ApiResponse(responseCode = "403", description = "No autorizado - se requiere rol ANALISTA"),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
+    @GetMapping("/users")
+    public ResponseEntity<List<UserResponseDto>> getAllUsers() {
+        return ResponseEntity.ok(userService.getAllUsers());
+    }
 
     @Operation(summary = "Actualizar nombre")
     @ApiResponses({
@@ -39,7 +51,7 @@ public class UserController {
             @PathVariable Long id,
             @RequestParam String firstName) {
 
-        return ResponseEntity.ok(service.updateUserFirstName(id, firstName));
+        return ResponseEntity.ok(userService.updateUserFirstName(id, firstName));
     }
 
     @Operation(summary = "Actualizar apellido")
@@ -55,7 +67,7 @@ public class UserController {
             @PathVariable Long id,
             @RequestParam String lastName) {
 
-        return ResponseEntity.ok(service.updateUserLastName(id, lastName));
+        return ResponseEntity.ok(userService.updateUserLastName(id, lastName));
     }
 
     @Operation(summary = "Obtener usuario")
@@ -67,6 +79,8 @@ public class UserController {
     })
     @GetMapping("/{id}")
     public User findById(@PathVariable Long id){
-        return service.findById(id);
+        return userService.findById(id);
     }
+
+
 }

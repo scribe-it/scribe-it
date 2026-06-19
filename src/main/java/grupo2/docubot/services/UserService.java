@@ -76,4 +76,12 @@ public class UserService {
     public List<User> getByDepartment(String department) {
         return userRepository.findByDepartment(department);
     }
+
+    @PreAuthorize("hasRole('ANALISTA')")
+    public List<UserResponseDto> getAllUsers() {
+        return userRepository.findAll()
+                .stream()
+                .map(userMapper::toDto)
+                .toList();
+    }
 }
