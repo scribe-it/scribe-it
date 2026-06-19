@@ -33,6 +33,7 @@ import java.util.List;
         @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     @GetMapping("/drafts")
+    @PreAuthorize("hasRole('ANALISTA')")
     public ResponseEntity<List<DocumentResponseDto>> getAllDrafts() {
         return ResponseEntity.ok().body(documentService.getAllDrafts());
     }
@@ -46,6 +47,7 @@ import java.util.List;
         @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     @PostMapping
+    @PreAuthorize("hasRole('ANALISTA')")
     public ResponseEntity<DocumentResponseDto> create(@RequestBody @Valid DocumentRequestDto documentRequestDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(documentService.create(documentRequestDto));
     }
@@ -60,6 +62,7 @@ import java.util.List;
         @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     @PatchMapping("/{documentId}")
+    @PreAuthorize("hasRole('ANALISTA')")
     public ResponseEntity<DocumentResponseDto> addUseCase(@PathVariable Long documentId, @RequestBody @Valid UseCaseRequestDto useCase) {
         return ResponseEntity.ok().body(documentService.addUseCase(documentId, useCase));
     }
@@ -74,6 +77,7 @@ import java.util.List;
         @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     @PatchMapping("/{documentId}/remove/{useCaseId}")
+    @PreAuthorize("hasRole('ANALISTA')")
     public ResponseEntity<Void> removeUseCase(@PathVariable Long documentId, @PathVariable Long useCaseId) {
         documentService.removeUseCase(documentId, useCaseId);
         return ResponseEntity.noContent().build();
@@ -90,6 +94,7 @@ import java.util.List;
         @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     @PostMapping("/{documentId}/publish")
+    @PreAuthorize("hasRole('ANALISTA')")
     public ResponseEntity<DocumentResponseDto> publishDraft(@PathVariable Long documentId) {
         return ResponseEntity.ok().body(documentService.publishDocument(documentId));
     }
@@ -104,6 +109,7 @@ import java.util.List;
         @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     @PatchMapping("/{documentId}/unpublish")
+    @PreAuthorize("hasRole('ANALISTA')")
     public ResponseEntity<DocumentResponseDto> unpublishDocument(@PathVariable Long documentId){
         return ResponseEntity.ok().body(documentService.unpublishDocument(documentId));
     }
@@ -129,6 +135,7 @@ import java.util.List;
         @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     @DeleteMapping("/{documentId}")
+    @PreAuthorize("hasRole('ANALISTA')")
     public ResponseEntity<Void> deleteDraft(@PathVariable Long documentId) {
         documentService.deleteDraft(documentId);
         return ResponseEntity.noContent().build();
