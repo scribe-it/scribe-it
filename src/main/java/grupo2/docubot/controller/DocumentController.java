@@ -21,10 +21,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/document")
 @RequiredArgsConstructor
-public class DocumentController {
+    public class DocumentController {
 
     private final DocumentService documentService;
 
+    @PreAuthorize("hasRole('ANALISTA')")
     @Operation(summary = "Obtener todos los borradores")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Lista de borradores del usuario autenticado"),
@@ -37,6 +38,7 @@ public class DocumentController {
         return ResponseEntity.ok().body(documentService.getAllDrafts());
     }
 
+    @PreAuthorize("hasRole('ANALISTA')")
     @Operation(summary = "Crear borrador")
     @ApiResponses({
         @ApiResponse(responseCode = "201", description = "Borrador creado exitosamente"),
@@ -50,6 +52,7 @@ public class DocumentController {
         return ResponseEntity.status(HttpStatus.CREATED).body(documentService.create(documentRequestDto));
     }
 
+    @PreAuthorize("hasRole('ANALISTA')")
     @Operation(summary = "Agregar caso de uso al documento", description = "Asocia un caso de uso existente a un documento en estado borrador")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Caso de uso agregado al borrador"),
@@ -64,6 +67,7 @@ public class DocumentController {
         return ResponseEntity.ok().body(documentService.addUseCase(documentId, useCase));
     }
 
+    @PreAuthorize("hasRole('ANALISTA')")
     @Operation(summary = "Remover caso de uso del documento")
     @ApiResponses({
         @ApiResponse(responseCode = "204", description = "Caso de uso removido del borrador (sin contenido)"),
@@ -79,6 +83,7 @@ public class DocumentController {
         return ResponseEntity.noContent().build();
     }
 
+    @PreAuthorize("hasRole('ANALISTA')")
     @Operation(summary = "Publicar borrador", description = "Cambia el estado del documento de borrador a publicado, haciéndolo visible para todos los usuarios")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Documento publicado exitosamente"),
@@ -94,6 +99,7 @@ public class DocumentController {
         return ResponseEntity.ok().body(documentService.publishDocument(documentId));
     }
 
+    @PreAuthorize("hasRole('ANALISTA')")
     @Operation(summary = "Eliminar publicación", description = "Revierte un documento publicado a estado borrador")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Publicación revertida a borrador"),
@@ -119,6 +125,7 @@ public class DocumentController {
         return ResponseEntity.ok().body(documentService.getAllPublished());
     }
 
+    @PreAuthorize("hasRole('ANALISTA')")
     @Operation(summary = "Eliminar borrador")
     @ApiResponses({
         @ApiResponse(responseCode = "204", description = "Borrador eliminado (sin contenido)"),

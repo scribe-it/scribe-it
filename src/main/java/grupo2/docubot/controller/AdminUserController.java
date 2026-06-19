@@ -1,15 +1,8 @@
 package grupo2.docubot.controller;
 
-import grupo2.docubot.dto.request.DocumentRequestDto;
-import grupo2.docubot.dto.request.UseCaseRequestDto;
 import grupo2.docubot.dto.request.UserRegisterRequestDto;
-import grupo2.docubot.dto.response.DocumentResponseDto;
-import grupo2.docubot.dto.response.UseCaseResponseDto;
 import grupo2.docubot.dto.response.UserResponseRegisterDto;
-import grupo2.docubot.mappers.RegisterMapper;
-import grupo2.docubot.models.UseCase;
 import grupo2.docubot.services.AuthService;
-import grupo2.docubot.services.DocumentService;
 import grupo2.docubot.services.UseCaseService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -31,7 +24,6 @@ import java.util.List;
 @PreAuthorize("hasRole('ANALISTA')")
 public class AdminUserController {
     private final AuthService authService;
-    private final RegisterMapper registerMapper;
     private final UseCaseService useCaseService;
 
     @Operation(summary="Crear usuario", description="Registra un nuevo usuario con rol EXPERTO. Solo accesible para ANALISTA.")

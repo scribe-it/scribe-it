@@ -23,9 +23,15 @@ export default function LoginPage() {
     }
   };
   return (
-    <div className="flex items-center justify-center h-screen bg-muted/30">
-      <form onSubmit={handleSubmit} className="flex flex-col w-[600px] bg-card rounded-xl shadow-panel overflow-hidden">
-        <img src={"/docubot_logo_dark.png"} alt="Logo" className="w-full" />
+    <div
+      className="flex items-center justify-center h-screen bg-no-repeat bg-cover"
+      style={{
+        backgroundImage: "url('/docubot_logo_dark.png')",
+        backgroundPosition: "center -240px",
+        backgroundColor: "#1D1E19",
+      }}
+    >
+      <form onSubmit={handleSubmit} className="flex flex-col w-max-lg bg-slate-800 rounded-xl shadow-panel overflow-hidden">
         <div className="flex flex-col gap-4 p-8 pt-6">
           {error && <p className="text-destructive text-sm">{error}</p>}
           <Input

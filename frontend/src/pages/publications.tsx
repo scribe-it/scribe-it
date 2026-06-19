@@ -2,21 +2,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
 import { toast } from "sonner";
-import { FileText, XIcon } from "lucide-react";
+import { FileText } from "lucide-react";
 import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
 import type { UseCase } from "./editor";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { CommentsSection } from "./comments-section";
+import { usePagination } from "@/hooks/use-pagination";
+import { DataPagination } from "@/components/data-pagination";
+import { useAuth } from "@/context/use-auth";
 
 type PublishedDocument = {
   id: number;
@@ -32,9 +26,8 @@ const splitNumberedItems = (text: string) => {
 };
 
 const Publications = () => {
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [publicationToDelete, setPublicationToDelete] = useState<number | null>(null);
   const queryClient = useQueryClient();
+  const { userData } = useAuth();
 
   const {
     data: publications,
@@ -55,39 +48,28 @@ const Publications = () => {
     },
   });
 
+  const { page, setPage, totalPages, paginatedItems: paginatedPublications } = usePagination(publications, 6);
+
   const {
-    mutateAsync: deletePublication,
-    isPending: isDeletingPublication,
+    mutateAsync: unpublishPublication,
+    isPending: isUnpublishing,
   } = useMutation({
     mutationFn: async (documentId: number) => {
-      const res = await fetch(`/api/v1/document/${documentId}`, {
-        method: "DELETE",
+      const res = await fetch(`/api/v1/document/${documentId}/unpublish`, {
+        method: "PATCH",
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
-      if (!res.ok) {
-        throw new Error("Error eliminando publicacion");
-      }
+      if (!res.ok) throw new Error("Error despublicando");
     },
     onSuccess: () => {
-      toast.success("Publicacion eliminada exitosamente");
-      setIsDeleteDialogOpen(false);
-      setPublicationToDelete(null);
+      toast.success("Publicación revertida a borrador");
       queryClient.invalidateQueries({ queryKey: ["published-documents"] });
+      queryClient.invalidateQueries({ queryKey: ["drafts"] });
     },
     onError: () => {
-      toast.error("No se pudo eliminar la publicacion. Intenta nuevamente.");
+      toast.error("No se pudo despublicar. Intenta nuevamente.");
     },
   });
-
-  const handleRequestDeletePublication = (documentId: number) => {
-    setPublicationToDelete(documentId);
-    setIsDeleteDialogOpen(true);
-  };
-
-  const handleConfirmDeletePublication = async () => {
-    if (!publicationToDelete) return;
-    await deletePublication(publicationToDelete);
-  };
 
   const exportPDF = async (publication: PublishedDocument) => {
     const loading = toast.loading("Generando PDF...");
@@ -140,39 +122,8 @@ const Publications = () => {
   };
 
   return (
-    <div className="p-6 space-y-6 bg-background w-full min-h-screen">
-      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Eliminar publicacion</DialogTitle>
-            <DialogDescription>
-              Esta accion eliminara la publicacion completa. Esta accion no se puede deshacer.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => {
-                setIsDeleteDialogOpen(false);
-                setPublicationToDelete(null);
-              }}
-              disabled={isDeletingPublication}
-            >
-              Cancelar
-            </Button>
-            <Button
-              type="button"
-              variant="destructive"
-              onClick={handleConfirmDeletePublication}
-              disabled={isDeletingPublication}
-            >
-              {isDeletingPublication ? "Eliminando..." : "Eliminar"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-      <h1 className="text-2xl font-bold text-foreground w-full">Publicaciones</h1>
+    <div className="p-6 space-y-6 bg-background w-full min-h-screen ">
+      <h1 className="text-2xl font-bold text-foreground w-full border-b border-white/[0.07] pb-4">Publicaciones</h1>
 
       {isLoading && (
         <p className="text-muted-foreground">Cargando publicaciones...</p>
@@ -188,25 +139,31 @@ const Publications = () => {
 
       {!isLoading && !isError && !!publications?.length && (
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {publications.map((publication) => (
+          {paginatedPublications.map((publication) => (
             <Card key={publication.id} className="relative rounded-lg border border-border">
-              <XIcon
-                className="absolute top-2 right-2 z-10 cursor-pointer rounded-lg text-red-400 hover:bg-red-500/20"
-                onClick={() => handleRequestDeletePublication(publication.id)}
-              />
               <CardHeader>
                 <div className="flex items-center justify-between gap-2">
                   <CardTitle className="text-lg">{publication.title}</CardTitle>
                   <div className="flex items-center gap-2">
+                    {userData?.role === "ANALISTA" && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => unpublishPublication(publication.id)}
+                        disabled={isUnpublishing}
+                      >
+                        Despublicar
+                      </Button>
+                    )}
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="size-8 -translate-x-5"
+                      className="size-8"
                       onClick={() => exportPDF(publication)}
                     >
                       <FileText className="size-4" />
                     </Button>
-                    <Badge variant="secondary" className="-translate-x-6">#{publication.id}</Badge>
+                    <Badge variant="secondary">#{publication.id}</Badge>
                   </div>
                 </div>
               </CardHeader>
@@ -252,6 +209,7 @@ const Publications = () => {
           ))}
         </div>
       )}
+      <DataPagination page={page} totalPages={totalPages} onPageChange={setPage} />
     </div>
   );
 };

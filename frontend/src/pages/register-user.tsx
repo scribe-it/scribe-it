@@ -1,16 +1,20 @@
 import { Chat } from "@/components"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { z } from "zod"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 
-type RegisterUserForm = {
-    firstName: string
-    lastName: string
-    email: string
-    password: string
-    department: string
-}
+const schema = z.object({
+    firstName: z.string().min(2, "El nombre debe tener al menos 2 caracteres"),
+    lastName: z.string().min(2, "El apellido debe tener al menos 2 caracteres"),
+    email: z.string().email("Ingresa un email valido"),
+    password: z.string().min(8, "La contrasena debe tener al menos 8 caracteres"),
+    department: z.string().min(1, "Selecciona un departamento"),
+})
+
+type RegisterUserForm = z.infer<typeof schema>
 
 export default function RegisterUser() {
     const [departments, setDepartments] = useState<string[]>([])
@@ -22,6 +26,8 @@ export default function RegisterUser() {
         reset,
         formState: { errors, isSubmitting },
     } = useForm<RegisterUserForm>({
+        mode: "onBlur",
+        resolver: zodResolver(schema),
         defaultValues: {
             firstName: "",
             lastName: "",
@@ -93,20 +99,14 @@ export default function RegisterUser() {
                 <Input
                     placeholder="Nombre"
                     className="text-white"
-                    {...register("firstName", {
-                        required: "El nombre es obligatorio",
-                        minLength: { value: 2, message: "Debe tener al menos 2 caracteres" },
-                    })}
+                    {...register("firstName")}
                 />
                 {errors.firstName && <p className="text-red-600 text-xs">{errors.firstName.message}</p>}
 
                 <Input
                     placeholder="Apellido"
                     className="text-white"
-                    {...register("lastName", {
-                        required: "El apellido es obligatorio",
-                        minLength: { value: 2, message: "Debe tener al menos 2 caracteres" },
-                    })}
+                    {...register("lastName")}
                 />
                 {errors.lastName && <p className="text-red-600 text-xs">{errors.lastName.message}</p>}
 
@@ -114,21 +114,13 @@ export default function RegisterUser() {
                     type="email"
                     placeholder="Email"
                     className="text-white"
-                    {...register("email", {
-                        required: "El email es obligatorio",
-                        pattern: {
-                            value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                            message: "Ingresa un email valido",
-                        },
-                    })}
+                    {...register("email")}
                 />
                 {errors.email && <p className="text-red-600 text-xs">{errors.email.message}</p>}
 
                 <select
                     className="border border-border rounded-lg px-3 py-2 bg-background text-foreground"
-                    {...register("department", {
-                        required: "Selecciona un departamento",
-                    })}
+                    {...register("department")}
                 >
                     <option value="" disabled>Seleccione un departamento</option>
                     {departments.map((d) => (
@@ -141,10 +133,7 @@ export default function RegisterUser() {
                     type="password"
                     placeholder="Contraseña"
                     className="text-white"
-                    {...register("password", {
-                        required: "La contrasena es obligatoria",
-                        minLength: { value: 8, message: "Debe tener al menos 8 caracteres" },
-                    })}
+                    {...register("password")}
                 />
                 {errors.password && <p className="text-red-600 text-xs">{errors.password.message}</p>}
 
