@@ -10,6 +10,8 @@ import grupo2.docubot.models.User;
 import grupo2.docubot.repository.ChatRepository;
 import grupo2.docubot.repository.MessageRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -113,5 +115,17 @@ public class MessageService {
         messageRepository.saveAll(messages);
 
         return null;
+    }
+
+    public Page<MessageResponseDto> findByChatIdAndContent(Long chatId, String content, Pageable pageable){
+        if (content == null || content.trim().isEmpty()) {
+            throw new ResourceNotFoundException("Message not found");
+        }
+        return messageRepository.findByChatIdAndContentContainingIgnoreCase(chatId, content, pageable)
+                .map(messageMapper::toDto);
+    }
+    public Page<MessageResponseDto> findByChatIdAndTimestamp(Long chatId, LocalDateTime timestamp, Pageable pageable){
+        return messageRepository.findByChatIdAndTimestamp(chatId, timestamp, pageable)
+                .map(messageMapper::toDto);
     }
 }
